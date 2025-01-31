@@ -5,6 +5,9 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Elevator.ElevatorStates;
+import frc.robot.subsystems.Pivot.PivotStates;
+import frc.robot.subsystems.Roller.RollerStates;
 import frc.robot.subsystems.Swerve.SwerveStates;
 
 public class Manager extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
@@ -12,14 +15,20 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   private boolean status = false;
   private boolean initialized = false;
 
-  private Swerve swerve = Swerve.getInstance();
+  public Swerve swerve = Swerve.getInstance();
+  public Roller roller = Roller.getInstance();
+  public Pivot pivot = Pivot.getInstance();
+  public Elevator elevator = Elevator.getInstance();
 
   private ManagerStates desiredState, currentState = ManagerStates.IDLE;
 
   /** Creates a new Manager. */
   public Manager() {
     // All subsystems should initialize when calling getInstance()
-    initialized = swerve.getInitialized();
+    initialized &= swerve.getInitialized();
+    initialized &= roller.getInitialized();
+    initialized &= pivot.getInitialized();
+    initialized &= elevator.getInitialized();
   }
 
   /**
@@ -28,6 +37,9 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   @Override
   public void stop() {
     swerve.stop();
+    roller.stop();
+    pivot.stop();
+    elevator.stop();
   }
 
   /**
@@ -43,7 +55,10 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
    */
   @Override
   public boolean checkSubsystem() {
-    status = swerve.checkSubsystem();
+    status &= swerve.checkSubsystem();
+    status &= roller.checkSubsystem();
+    status &= pivot.checkSubsystem();
+    status &= elevator.checkSubsystem();
 
     return status;
   }
@@ -54,6 +69,9 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   @Override
   public void update() {
     swerve.update();
+    roller.update();
+    pivot.update();
+    elevator.update();
 
     switch(currentState) {
       case IDLE:
@@ -79,6 +97,9 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     switch(desiredState) {
       case IDLE:
         swerve.setDesiredState(SwerveStates.IDLE);
+        roller.setDesiredState(RollerStates.IDLE);
+        pivot.setDesiredState(PivotStates.IDLE);
+        elevator.setDesiredState(ElevatorStates.IDLE);
         break;
       case DRIVE:
         swerve.setDesiredState(SwerveStates.DRIVE);

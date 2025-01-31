@@ -4,14 +4,59 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-public class Flipper extends SubsystemBase {
-  /** Creates a new Flipper. */
-  public Flipper() {}
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CANConstants;
+
+public class Flipper extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
+  private boolean initialized, status = false;
+
+  private SparkMax motor;
+  
+  public Flipper() {
+    motor = new SparkMax(CANConstants.FLIPPER_ID, MotorType.kBrushless);
+
+    initialized = true;
+  }
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  public void periodic() {}
+
+  @Override
+  public void stop() {
+    motor.stopMotor();
+  }
+
+  @Override
+  public boolean getInitialized() {
+    return initialized;
+  }
+
+  @Override
+  public boolean checkSubsystem() {
+    status &= initialized;
+
+    return status;
+  }
+
+  @Override
+  public void update() {
+
+  }
+
+  @Override
+  public void handleStateTransition() {
+
+  }
+
+  public void setDesiredState() {
+
+  }
+
+  public enum FlipperStates {
+    IDLE,
+    BROKEN;
   }
 }

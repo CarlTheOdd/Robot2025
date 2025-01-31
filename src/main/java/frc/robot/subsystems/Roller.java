@@ -9,14 +9,16 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
+import frc.robot.Constants.RollerConstants;
 
 // This is for the coral
 public class Roller extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
-
   private boolean status = false;
   private boolean initialized = false;
 
   private SparkMax motor;
+
+  private static Roller m_instance;
 
   private RollerStates desiredState, currentState = RollerStates.IDLE;
 
@@ -26,6 +28,18 @@ public class Roller extends SubsystemBase implements CheckableSubsystem, StateSu
 
     initialized = true;
     status = true;
+  }
+  
+  public static Roller getInstance() {
+    if(m_instance == null) {
+      m_instance = new Roller();
+    }
+
+    return m_instance;
+  }
+
+  public void runRollers() {
+    motor.set(RollerConstants.ROLLER_SPEED);
   }
 
   @Override
@@ -45,10 +59,26 @@ public class Roller extends SubsystemBase implements CheckableSubsystem, StateSu
     return status;
   }
 
-  public void setDesiredState(RollerStates state) {
-    if(this.desiredState != state) {
-      desiredState = state;
-      handleStateTransition();
+  @Override
+  public void periodic() {}
+
+  @Override
+  public void update() {
+    switch(currentState) {
+      case IDLE:
+        break;
+      case BROKEN:
+        break;
+      case RUNNING:
+        runRollers();
+        break;
+
+      default:
+        break;
+    }
+
+    if(!checkSubsystem()) {
+      setDesiredState(RollerStates.BROKEN);
     }
   }
 
@@ -71,27 +101,11 @@ public class Roller extends SubsystemBase implements CheckableSubsystem, StateSu
     currentState = desiredState;
   }
 
-  public void update() {
-    switch(currentState) {
-      case IDLE:
-        break;
-      case BROKEN:
-        break;
-      case RUNNING:
-        break;
-
-      default:
-        break;
+  public void setDesiredState(RollerStates state) {
+    if(this.desiredState != state) {
+      desiredState = state;
+      handleStateTransition();
     }
-
-    if(!checkSubsystem()) {
-      setDesiredState(RollerStates.BROKEN);
-    }
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
   }
 
   public enum RollerStates {

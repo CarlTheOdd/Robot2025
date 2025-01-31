@@ -10,13 +10,14 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
 
-// This is for the coral
+// This is for the algae
 public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
-
   private boolean status = false;
   private boolean initialized = false;
 
   private SparkMax motor;
+
+  private static Pivot m_instance;
 
   private PivotStates desiredState, currentState = PivotStates.IDLE;
 
@@ -25,7 +26,14 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     motor = new SparkMax(CANConstants.PIVOT_ID, MotorType.kBrushless);
 
     initialized = true;
-    status = true;
+  }
+
+  public static Pivot getInstance() {
+    if(m_instance == null) {
+      m_instance = new Pivot();
+    }
+
+    return m_instance;
   }
 
   @Override
@@ -40,7 +48,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
 
   @Override
   public boolean checkSubsystem() {
-    status = getInitialized();
+    status &= getInitialized();
 
     return status;
   }

@@ -4,14 +4,97 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-public class AgaeIntake extends SubsystemBase {
-  /** Creates a new AgaeIntake. */
-  public AgaeIntake() {}
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CANConstants;
+
+public class AgaeIntake extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
+  private boolean status, initialized = false;
+  
+  private SparkMax motor;
+
+  private AlgaeIntakeStates currentState, desiredState = AlgaeIntakeStates.IDLE;
+
+  public AgaeIntake() {
+    motor = new SparkMax(CANConstants.ALGAE_INTAKE_ID, MotorType.kBrushless);
+
+    initialized = true;
+  }
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  public void periodic() {}
+
+  @Override
+  public void stop() {
+    motor.stopMotor();
+  }
+
+  @Override
+  public boolean getInitialized() {
+    return initialized;
+  }
+
+  public boolean checkSubsystem() {
+    status &= initialized;
+
+    return status;
+  }
+
+  @Override
+  public void update() {
+    switch(currentState) {
+      case IDLE:
+        break;
+      case BROKEN:
+        break;
+      case INTAKING:
+        break;
+      case SCORING:
+        break;
+
+      default:
+        break;
+    }
+    
+    if(!checkSubsystem()) {
+      setDesiredState(AlgaeIntakeStates.BROKEN);
+    }
+  }
+
+  @Override
+  public void handleStateTransition() {
+    switch(desiredState) {
+      case IDLE:
+        stop();
+        break;
+      case BROKEN:
+        stop();
+        break;
+      case INTAKING:
+        break;
+      case SCORING:
+        break;
+        
+      default:
+        break;
+    }
+
+    currentState = desiredState;
+  }
+
+  public void setDesiredState(AlgaeIntakeStates state) {
+    if(desiredState != state) {
+      desiredState = state;
+      handleStateTransition();
+    }
+  }
+
+  public enum AlgaeIntakeStates {
+    IDLE,
+    BROKEN,
+    INTAKING,
+    SCORING;
   }
 }
