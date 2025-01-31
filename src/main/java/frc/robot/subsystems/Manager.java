@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.AlgaeIntake.AlgaeIntakeStates;
 import frc.robot.subsystems.Elevator.ElevatorStates;
 import frc.robot.subsystems.Pivot.PivotStates;
 import frc.robot.subsystems.Roller.RollerStates;
@@ -18,6 +19,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   public Swerve swerve = Swerve.getInstance();
   public Roller roller = Roller.getInstance();
   public Pivot pivot = Pivot.getInstance();
+  public AlgaeIntake algaeIntake = AlgaeIntake.getInstance();
   public Elevator elevator = Elevator.getInstance();
 
   private ManagerStates desiredState, currentState = ManagerStates.IDLE;
@@ -28,6 +30,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     initialized &= swerve.getInitialized();
     initialized &= roller.getInitialized();
     initialized &= pivot.getInitialized();
+    initialized &= algaeIntake.getInitialized();
     initialized &= elevator.getInitialized();
   }
 
@@ -39,6 +42,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     swerve.stop();
     roller.stop();
     pivot.stop();
+    algaeIntake.stop();
     elevator.stop();
   }
 
@@ -58,6 +62,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     status &= swerve.checkSubsystem();
     status &= roller.checkSubsystem();
     status &= pivot.checkSubsystem();
+    status &= algaeIntake.checkSubsystem();
     status &= elevator.checkSubsystem();
 
     return status;
@@ -71,6 +76,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     swerve.update();
     roller.update();
     pivot.update();
+    algaeIntake.update();
     elevator.update();
 
     switch(currentState) {
@@ -99,6 +105,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
         swerve.setDesiredState(SwerveStates.IDLE);
         roller.setDesiredState(RollerStates.IDLE);
         pivot.setDesiredState(PivotStates.IDLE);
+        algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
         elevator.setDesiredState(ElevatorStates.IDLE);
         break;
       case DRIVE:

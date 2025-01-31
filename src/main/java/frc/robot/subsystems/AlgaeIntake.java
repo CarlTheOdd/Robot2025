@@ -8,23 +8,42 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.AlgaeIntakeConstants;
 import frc.robot.Constants.CANConstants;
 
-public class AgaeIntake extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
+public class AlgaeIntake extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
   private boolean status, initialized = false;
   
   private SparkMax motor;
 
+  private static AlgaeIntake m_instance;
+
   private AlgaeIntakeStates currentState, desiredState = AlgaeIntakeStates.IDLE;
 
-  public AgaeIntake() {
+  public AlgaeIntake() {
     motor = new SparkMax(CANConstants.ALGAE_INTAKE_ID, MotorType.kBrushless);
 
     initialized = true;
   }
 
+  public static AlgaeIntake getInstance() {
+    if(m_instance == null) {
+      m_instance = new AlgaeIntake();
+    }
+
+    return m_instance;
+  }
+
   @Override
   public void periodic() {}
+
+  public void intake() {
+    motor.set(AlgaeIntakeConstants.ALGAE_INTAKING_SPEED);
+  }
+
+  public void score() {
+    motor.set(AlgaeIntakeConstants.ALGAE_SCORING_SPEED);
+  }
 
   @Override
   public void stop() {
@@ -50,8 +69,10 @@ public class AgaeIntake extends SubsystemBase implements CheckableSubsystem, Sta
       case BROKEN:
         break;
       case INTAKING:
+        intake();
         break;
       case SCORING:
+        score();
         break;
 
       default:

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.AlgaeIntake.AlgaeIntakeStates;
 import frc.robot.subsystems.Manager;
 import frc.robot.subsystems.Manager.ManagerStates;
 import frc.robot.subsystems.Roller.RollerStates;
@@ -51,8 +52,24 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.LOCKED), m_Manager))
         .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
 
+    // Runs rollers
     m_controller.x().whileTrue(new RunCommand(
-      () -> m_Manager.roller.setDesiredState(RollerStates.RUNNING)
+      () -> m_Manager.roller.setDesiredState(RollerStates.RUNNING),
+      m_Manager.roller
+    ));
+
+    // Intakes with algae intake
+    m_controller.leftBumper().whileTrue(new RunCommand(
+      () -> m_Manager.algaeIntake.setDesiredState(AlgaeIntakeStates.INTAKING),
+      m_Manager.algaeIntake,
+      m_Manager.pivot
+    ));
+
+    // Scores with algae intake
+    m_controller.leftTrigger().whileTrue(new RunCommand(
+      () -> m_Manager.algaeIntake.setDesiredState(AlgaeIntakeStates.SCORING),
+      m_Manager.algaeIntake,
+      m_Manager.pivot
     ));
   }
 

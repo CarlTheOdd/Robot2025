@@ -115,6 +115,11 @@ public abstract class Constants {
     public static final double ROLLER_SPEED = 0.2;
   }
 
+  public static abstract class AlgaeIntakeConstants {
+    public static final double ALGAE_INTAKING_SPEED = 0.4;
+    public static final double ALGAE_SCORING_SPEED = 0.2;
+  }
+
   public static abstract class OIConstants {
     public static final int DRIVER_CONTROLLER_PORT = 0;
     public static final int XBOX_CONTROLLER_PORT = 1;
