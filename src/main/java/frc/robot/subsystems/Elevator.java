@@ -7,8 +7,10 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
+// import frc.robot.Constants.ElevatorConstants;
 
 public class Elevator extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
   private boolean initialized, status = false;
@@ -17,11 +19,16 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
 
   private static Elevator m_instance;
 
+  private PIDController pid;
+
   private ElevatorStates currentState, desiredState = ElevatorStates.IDLE;
 
   public Elevator() {
     motor1 = new SparkMax(CANConstants.ELEVATOR_MOTOR_ONE_ID, MotorType.kBrushless);
     motor2 = new SparkMax(CANConstants.ELEVATOR_MOTOR_TWO_ID, MotorType.kBrushless);
+
+    pid = new PIDController(0.05, 0, 0);
+    pid.setTolerance(5);
 
     initialized = true;
   }
@@ -36,6 +43,27 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
 
   @Override
   public void periodic() {}
+
+  public void setSpeed(double speed) {
+    motor1.set(speed);
+    motor2.set(speed);
+  }
+
+  // public void goToHomePos() {
+  //   pid.setSetpoint(ElevatorConstants.HOME_POSITION);
+
+  //   if(!pid.atSetpoint()) {
+  //     setSpeed(pid.calculate(motor1.getEncoder().getPosition()));
+  //   }
+  // }
+
+  // public void goToL2Pos() {
+  //   double setpoint = 
+  // }
+
+  // public void goToClimbPos() {
+
+  // }
 
   @Override
   public void stop() {
@@ -63,10 +91,13 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
       case BROKEN:
         break;
       case HOME:
+        // goToHomePos();
         break;
       case L2:
+        // goToL2Pos();
         break;
       case CLIMBING:
+        // goToClimbPos();
         break;
 
       default:
@@ -106,6 +137,10 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
       desiredState = state;
       handleStateTransition();
     }
+  }
+
+  public ElevatorStates getState() {
+    return currentState;
   }
 
   public enum ElevatorStates {

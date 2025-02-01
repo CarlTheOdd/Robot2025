@@ -43,6 +43,10 @@ public class RobotContainer {
     ShuffleboardTab main = Shuffleboard.getTab("Main");
     main.addString("Manager State", () -> m_Manager.getState().toString());
     main.addString("Swerve State", () -> m_Manager.swerve.getState().toString());
+    main.addString("Roller State", () -> m_Manager.roller.getState().toString());
+    main.addString("Pivot State", () -> m_Manager.pivot.getState().toString());
+    main.addString("Algae Intake State", () -> m_Manager.algaeIntake.getState().toString());
+    main.addString("Elevator State", () -> m_Manager.elevator.getState().toString());
   }
 
   private void configureBindings() {

@@ -29,6 +29,8 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   public Pivot() {
     motor = new SparkMax(CANConstants.PIVOT_ID, MotorType.kBrushless);
 
+    pid.setTolerance(3);
+
     initialized = true;
   }
 
@@ -137,6 +139,10 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
       desiredState = state;
       handleStateTransition();
     }
+  }
+
+  public PivotStates getState() {
+    return currentState;
   }
 
   public enum PivotStates {

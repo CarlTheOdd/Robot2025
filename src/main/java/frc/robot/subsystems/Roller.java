@@ -108,6 +108,10 @@ public class Roller extends SubsystemBase implements CheckableSubsystem, StateSu
     }
   }
 
+  public RollerStates getState() {
+    return currentState;
+  }
+
   public enum RollerStates {
     IDLE,
     BROKEN,

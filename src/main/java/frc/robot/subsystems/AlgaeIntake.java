@@ -112,6 +112,10 @@ public class AlgaeIntake extends SubsystemBase implements CheckableSubsystem, St
     }
   }
 
+  public AlgaeIntakeStates getState() {
+    return currentState;
+  }
+
   public enum AlgaeIntakeStates {
     IDLE,
     BROKEN,

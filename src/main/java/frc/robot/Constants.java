@@ -100,8 +100,6 @@ public abstract class Constants {
     public static final int BL_ENCODER_ANALOG_INPUT_CHANNEL = 2;
     public static final int BR_ENCODER_ANALOG_INPUT_CHANNEL = 3;
 
-    public static final int PIVOT_ENCODER_ID = 4;
-
     // Gyro
     public static final int GYRO_ID = 10;
 
@@ -127,6 +125,15 @@ public abstract class Constants {
     public static final double INTAKE_ROTATION = 0.125;
     public static final double SCORE_ROTATION = 0.25;
   }
+
+  // public static abstract class ElevatorConstants {
+  //   public static final double ELEVATOR_PULLY_CIRCUMFERENCE = 1.46 * Math.PI;
+  //   public static final double ELEVATOR_GEAR_RATIO = 6;
+  //   public static final double ELEVATOR_MOVE_SPEED = 0.4;
+
+  //   public static final double HOME_POSITION = 0;
+  //   public static final double L2_POSITION = 7.483;
+  // }
 
   public static abstract class OIConstants {
     public static final int DRIVER_CONTROLLER_PORT = 0;
