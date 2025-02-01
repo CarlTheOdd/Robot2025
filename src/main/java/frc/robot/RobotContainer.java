@@ -18,6 +18,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.AlgaeIntake.AlgaeIntakeStates;
 import frc.robot.subsystems.Manager;
 import frc.robot.subsystems.Manager.ManagerStates;
+import frc.robot.subsystems.Pivot.PivotStates;
 import frc.robot.subsystems.Roller.RollerStates;
 
 public class RobotContainer {
@@ -70,6 +71,27 @@ public class RobotContainer {
       () -> m_Manager.algaeIntake.setDesiredState(AlgaeIntakeStates.SCORING),
       m_Manager.algaeIntake,
       m_Manager.pivot
+    ));
+
+    // Sets algae intake to home position
+    m_controller.a().whileTrue(new RunCommand(
+      () -> m_Manager.pivot.setDesiredState(PivotStates.STORED),
+      m_Manager.pivot,
+      m_Manager.algaeIntake
+    ));
+
+    // Sets algae intake to scoring position
+    m_controller.y().whileTrue(new RunCommand(
+      () -> m_Manager.pivot.setDesiredState(PivotStates.SCORING),
+      m_Manager.pivot,
+      m_Manager.algaeIntake
+    ));
+
+    // Sets algae intake to intaking position
+    m_controller.b().whileTrue(new RunCommand(
+      () -> m_Manager.pivot.setDesiredState(PivotStates.INTAKING),
+      m_Manager.pivot,
+      m_Manager.algaeIntake
     ));
   }
 

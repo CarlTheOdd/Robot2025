@@ -7,8 +7,10 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
+import frc.robot.Constants.PivotConstants;
 
 // This is for the algae
 public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
@@ -19,9 +21,11 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
 
   private static Pivot m_instance;
 
+  private PIDController pid = new PIDController(0.01, 0, 0);
+
   private PivotStates desiredState, currentState = PivotStates.IDLE;
 
-  /** Creates a new Pivots. */
+  /** Creates a new Pivot. */
   public Pivot() {
     motor = new SparkMax(CANConstants.PIVOT_ID, MotorType.kBrushless);
 
@@ -34,6 +38,30 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     }
 
     return m_instance;
+  }
+
+  public void store() {
+    pid.setSetpoint(PivotConstants.HOME_ROTATION);
+
+    if(!pid.atSetpoint()) {
+      motor.set(pid.calculate(motor.getEncoder().getPosition()));
+    }
+  }
+
+  public void score() {
+    pid.setSetpoint(PivotConstants.SCORE_ROTATION);
+
+    if(!pid.atSetpoint()) {
+      motor.set(pid.calculate(motor.getEncoder().getPosition()));
+    }
+  }
+
+  public void intake() {
+    pid.setSetpoint(PivotConstants.INTAKE_ROTATION);
+
+    if(!pid.atSetpoint()) {
+      motor.set(pid.calculate(motor.getEncoder().getPosition()));
+    }
   }
 
   @Override
@@ -53,10 +81,31 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     return status;
   }
 
-  public void setDesiredState(PivotStates state) {
-    if(this.desiredState != state) {
-      desiredState = state;
-      handleStateTransition();
+  @Override
+  public void periodic() {}
+
+  public void update() {
+    switch(currentState) {
+      case IDLE:
+        break;
+      case BROKEN:
+        break;
+      case STORED:
+        store();
+        break;
+      case SCORING:
+        score();
+        break;
+      case INTAKING:
+        intake();
+        break;
+
+      default:
+        break;
+    }
+
+    if(!checkSubsystem()) {
+      setDesiredState(PivotStates.BROKEN);
     }
   }
 
@@ -83,31 +132,11 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     currentState = desiredState;
   }
 
-  public void update() {
-    switch(currentState) {
-      case IDLE:
-        break;
-      case BROKEN:
-        break;
-      case STORED:
-        break;
-      case SCORING:
-        break;
-      case INTAKING:
-        break;
-
-      default:
-        break;
+  public void setDesiredState(PivotStates state) {
+    if(this.desiredState != state) {
+      desiredState = state;
+      handleStateTransition();
     }
-
-    if(!checkSubsystem()) {
-      setDesiredState(PivotStates.BROKEN);
-    }
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
   }
 
   public enum PivotStates {

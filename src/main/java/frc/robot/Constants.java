@@ -100,6 +100,8 @@ public abstract class Constants {
     public static final int BL_ENCODER_ANALOG_INPUT_CHANNEL = 2;
     public static final int BR_ENCODER_ANALOG_INPUT_CHANNEL = 3;
 
+    public static final int PIVOT_ENCODER_ID = 4;
+
     // Gyro
     public static final int GYRO_ID = 10;
 
@@ -118,6 +120,12 @@ public abstract class Constants {
   public static abstract class AlgaeIntakeConstants {
     public static final double ALGAE_INTAKING_SPEED = 0.4;
     public static final double ALGAE_SCORING_SPEED = 0.2;
+  }
+
+  public static abstract class PivotConstants {
+    public static final double HOME_ROTATION = 0;
+    public static final double INTAKE_ROTATION = 0.125;
+    public static final double SCORE_ROTATION = 0.25;
   }
 
   public static abstract class OIConstants {
