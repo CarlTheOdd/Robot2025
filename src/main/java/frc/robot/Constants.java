@@ -124,16 +124,20 @@ public abstract class Constants {
     public static final double HOME_ROTATION = 0;
     public static final double INTAKE_ROTATION = 0.125;
     public static final double SCORE_ROTATION = 0.25;
+
+    public static final double PIVOT_GEAR_RATIO = 7;
   }
 
-  // public static abstract class ElevatorConstants {
-  //   public static final double ELEVATOR_PULLY_CIRCUMFERENCE = 1.46 * Math.PI;
-  //   public static final double ELEVATOR_GEAR_RATIO = 6;
-  //   public static final double ELEVATOR_MOVE_SPEED = 0.4;
+  public static abstract class ElevatorConstants {
+    public static final double ELEVATOR_PULLY_CIRCUMFERENCE = 1.46 * Math.PI;
+    public static final double ELEVATOR_GEAR_RATIO = 6;
+    
+    public static final double ELEVATOR_MOVE_SPEED = 0.4;
 
-  //   public static final double HOME_POSITION = 0;
-  //   public static final double L2_POSITION = 7.483;
-  // }
+    public static final double HOME_POSITION = 0;
+    public static final double L2_POSITION = 7.483;
+    public static final double CLIMB_POSITION = 13;
+  }
 
   public static abstract class OIConstants {
     public static final int DRIVER_CONTROLLER_PORT = 0;

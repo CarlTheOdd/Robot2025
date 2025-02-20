@@ -12,13 +12,13 @@ import frc.robot.Constants.AlgaeIntakeConstants;
 import frc.robot.Constants.CANConstants;
 
 public class AlgaeIntake extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
-  private boolean status, initialized = false;
+  private boolean status = false, initialized = false;
   
   private SparkMax motor;
 
   private static AlgaeIntake m_instance;
 
-  private AlgaeIntakeStates currentState, desiredState = AlgaeIntakeStates.IDLE;
+  private AlgaeIntakeStates currentState = AlgaeIntakeStates.IDLE, desiredState = AlgaeIntakeStates.IDLE;
 
   public AlgaeIntake() {
     motor = new SparkMax(CANConstants.ALGAE_INTAKE_ID, MotorType.kBrushless);
@@ -55,6 +55,7 @@ public class AlgaeIntake extends SubsystemBase implements CheckableSubsystem, St
     return initialized;
   }
 
+  @Override
   public boolean checkSubsystem() {
     status &= initialized;
 

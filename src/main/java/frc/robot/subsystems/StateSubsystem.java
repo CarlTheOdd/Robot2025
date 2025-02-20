@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 public interface StateSubsystem {
-
   /* IMPORTANT!
    * A subsystem's states should be defined in an enum. Every subsystem should
    * have an idle state and broken state along with other subsystem specific states

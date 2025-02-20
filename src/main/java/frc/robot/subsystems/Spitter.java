@@ -12,33 +12,33 @@ import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.RollerConstants;
 
 // This is for the coral
-public class Roller extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
+public class Spitter extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
   private boolean status = false;
   private boolean initialized = false;
 
   private SparkMax motor;
 
-  private static Roller m_instance;
+  private static Spitter m_instance;
 
-  private RollerStates desiredState, currentState = RollerStates.IDLE;
+  private RollerStates desiredState = RollerStates.IDLE, currentState = RollerStates.IDLE;
 
   /** Creates a new Rollers. */
-  public Roller() {
+  public Spitter() {
     motor = new SparkMax(CANConstants.ROLLER_ID, MotorType.kBrushless);
 
     initialized = true;
     status = true;
   }
   
-  public static Roller getInstance() {
+  public static Spitter getInstance() {
     if(m_instance == null) {
-      m_instance = new Roller();
+      m_instance = new Spitter();
     }
 
     return m_instance;
   }
 
-  public void runRollers() {
+  public void runSpitter() {
     motor.set(RollerConstants.ROLLER_SPEED);
   }
 
@@ -70,7 +70,7 @@ public class Roller extends SubsystemBase implements CheckableSubsystem, StateSu
       case BROKEN:
         break;
       case RUNNING:
-        runRollers();
+        runSpitter();
         break;
 
       default:
@@ -86,8 +86,6 @@ public class Roller extends SubsystemBase implements CheckableSubsystem, StateSu
   public void handleStateTransition() {
     switch(desiredState) {
       case IDLE:
-        stop();
-        break;
       case BROKEN:
         stop();
         break;
@@ -102,7 +100,7 @@ public class Roller extends SubsystemBase implements CheckableSubsystem, StateSu
   }
 
   public void setDesiredState(RollerStates state) {
-    if(this.desiredState != state) {
+    if(desiredState != state) {
       desiredState = state;
       handleStateTransition();
     }

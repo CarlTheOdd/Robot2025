@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.AlgaeIntake.AlgaeIntakeStates;
 import frc.robot.subsystems.Elevator.ElevatorStates;
 import frc.robot.subsystems.Pivot.PivotStates;
-import frc.robot.subsystems.Roller.RollerStates;
+import frc.robot.subsystems.Spitter.RollerStates;
 import frc.robot.subsystems.Swerve.SwerveStates;
 
 public class Manager extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
@@ -17,7 +17,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   private boolean initialized = false;
 
   public Swerve swerve = Swerve.getInstance();
-  public Roller roller = Roller.getInstance();
+  public Spitter spitter = Spitter.getInstance();
   public Pivot pivot = Pivot.getInstance();
   public AlgaeIntake algaeIntake = AlgaeIntake.getInstance();
   public Elevator elevator = Elevator.getInstance();
@@ -28,7 +28,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   public Manager() {
     // All subsystems should initialize when calling getInstance()
     initialized &= swerve.getInitialized();
-    initialized &= roller.getInitialized();
+    initialized &= spitter.getInitialized();
     initialized &= pivot.getInitialized();
     initialized &= algaeIntake.getInitialized();
     initialized &= elevator.getInitialized();
@@ -40,7 +40,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   @Override
   public void stop() {
     swerve.stop();
-    roller.stop();
+    spitter.stop();
     pivot.stop();
     algaeIntake.stop();
     elevator.stop();
@@ -60,7 +60,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   @Override
   public boolean checkSubsystem() {
     status &= swerve.checkSubsystem();
-    status &= roller.checkSubsystem();
+    status &= spitter.checkSubsystem();
     status &= pivot.checkSubsystem();
     status &= algaeIntake.checkSubsystem();
     status &= elevator.checkSubsystem();
@@ -74,7 +74,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   @Override
   public void update() {
     swerve.update();
-    roller.update();
+    spitter.update();
     pivot.update();
     algaeIntake.update();
     elevator.update();
@@ -103,7 +103,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     switch(desiredState) {
       case IDLE:
         swerve.setDesiredState(SwerveStates.IDLE);
-        roller.setDesiredState(RollerStates.IDLE);
+        spitter.setDesiredState(RollerStates.IDLE);
         pivot.setDesiredState(PivotStates.IDLE);
         algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
         elevator.setDesiredState(ElevatorStates.IDLE);

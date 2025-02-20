@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 public interface CheckableSubsystem {
-
   /*
    * Should stop all of a subsystem's motors, servos, and/or pneumatic pistons
    */

@@ -23,7 +23,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
 
   private PIDController pid = new PIDController(0.01, 0, 0);
 
-  private PivotStates desiredState, currentState = PivotStates.IDLE;
+  private PivotStates desiredState = PivotStates.IDLE, currentState = PivotStates.IDLE;
 
   /** Creates a new Pivot. */
   public Pivot() {
@@ -43,7 +43,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   }
 
   public void store() {
-    pid.setSetpoint(PivotConstants.HOME_ROTATION);
+    pid.setSetpoint(PivotConstants.HOME_ROTATION * PivotConstants.PIVOT_GEAR_RATIO);
 
     if(!pid.atSetpoint()) {
       motor.set(pid.calculate(motor.getEncoder().getPosition()));
@@ -51,7 +51,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   }
 
   public void score() {
-    pid.setSetpoint(PivotConstants.SCORE_ROTATION);
+    pid.setSetpoint(PivotConstants.SCORE_ROTATION * PivotConstants.PIVOT_GEAR_RATIO);
 
     if(!pid.atSetpoint()) {
       motor.set(pid.calculate(motor.getEncoder().getPosition()));
@@ -59,7 +59,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   }
 
   public void intake() {
-    pid.setSetpoint(PivotConstants.INTAKE_ROTATION);
+    pid.setSetpoint(PivotConstants.INTAKE_ROTATION * PivotConstants.PIVOT_GEAR_RATIO);
 
     if(!pid.atSetpoint()) {
       motor.set(pid.calculate(motor.getEncoder().getPosition()));
