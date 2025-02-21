@@ -7,9 +7,10 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
-import frc.robot.Constants.RollerConstants;
+import frc.robot.Constants.SpitterConstants;
 
 // This is for the coral
 public class Spitter extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
@@ -17,10 +18,11 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
   private boolean initialized = false;
 
   private SparkMax motor;
+  private final DigitalInput proximitySensor = new DigitalInput(0);
 
   private static Spitter m_instance;
 
-  private RollerStates desiredState = RollerStates.IDLE, currentState = RollerStates.IDLE;
+  private SpitterStates desiredState = SpitterStates.IDLE, currentState = SpitterStates.IDLE;
 
   /** Creates a new Rollers. */
   public Spitter() {
@@ -39,7 +41,7 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
   }
 
   public void runSpitter() {
-    motor.set(RollerConstants.ROLLER_SPEED);
+    motor.set(SpitterConstants.SPITTER_SPEED);
   }
 
   @Override
@@ -66,9 +68,10 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
   public void update() {
     switch(currentState) {
       case IDLE:
-        break;
       case BROKEN:
         break;
+      case INTAKING:
+        if(!proximitySensor.get()) runSpitter();
       case RUNNING:
         runSpitter();
         break;
@@ -78,7 +81,7 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
     }
 
     if(!checkSubsystem()) {
-      setDesiredState(RollerStates.BROKEN);
+      setDesiredState(SpitterStates.BROKEN);
     }
   }
 
@@ -89,6 +92,7 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
       case BROKEN:
         stop();
         break;
+      case INTAKING:
       case RUNNING:
         break;
 
@@ -99,20 +103,21 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
     currentState = desiredState;
   }
 
-  public void setDesiredState(RollerStates state) {
+  public void setDesiredState(SpitterStates state) {
     if(desiredState != state) {
       desiredState = state;
       handleStateTransition();
     }
   }
 
-  public RollerStates getState() {
+  public SpitterStates getState() {
     return currentState;
   }
 
-  public enum RollerStates {
+  public enum SpitterStates {
     IDLE,
     BROKEN,
+    INTAKING,
     RUNNING;
   }
 }

@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.AlgaeIntake.AlgaeIntakeStates;
 import frc.robot.subsystems.Elevator.ElevatorStates;
 import frc.robot.subsystems.Pivot.PivotStates;
-import frc.robot.subsystems.Spitter.RollerStates;
+import frc.robot.subsystems.Spitter.SpitterStates;
 import frc.robot.subsystems.Swerve.SwerveStates;
 
 public class Manager extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
@@ -16,11 +16,11 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   private boolean status = false;
   private boolean initialized = false;
 
-  public Swerve swerve = Swerve.getInstance();
-  public Spitter spitter = Spitter.getInstance();
-  public Pivot pivot = Pivot.getInstance();
-  public AlgaeIntake algaeIntake = AlgaeIntake.getInstance();
-  public Elevator elevator = Elevator.getInstance();
+  private Swerve swerve = Swerve.getInstance();
+  private Spitter spitter = Spitter.getInstance();
+  private Pivot pivot = Pivot.getInstance();
+  private AlgaeIntake algaeIntake = AlgaeIntake.getInstance();
+  private Elevator elevator = Elevator.getInstance();
 
   private ManagerStates desiredState, currentState = ManagerStates.IDLE;
 
@@ -85,8 +85,12 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
         setDesiredState(ManagerStates.DRIVE);
         break;
       case DRIVE:
-        break;
       case LOCKED:
+      case INTAKING_CORAL:
+      case SCORING_LEVEL_ONE:
+      case SCORING_LEVEL_TWO:
+      case INTAKING_ALGAE:
+      case SCORING_ALGAE:
         break;
 
       default:
@@ -103,16 +107,38 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     switch(desiredState) {
       case IDLE:
         swerve.setDesiredState(SwerveStates.IDLE);
-        spitter.setDesiredState(RollerStates.IDLE);
+        spitter.setDesiredState(SpitterStates.IDLE);
         pivot.setDesiredState(PivotStates.IDLE);
         algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
         elevator.setDesiredState(ElevatorStates.IDLE);
         break;
       case DRIVE:
         swerve.setDesiredState(SwerveStates.DRIVE);
+        spitter.setDesiredState(SpitterStates.IDLE);
+        pivot.setDesiredState(PivotStates.IDLE);
+        algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
+        elevator.setDesiredState(ElevatorStates.IDLE);
         break;
       case LOCKED:
         swerve.setDesiredState(SwerveStates.LOCKED);
+        break;
+      case INTAKING_CORAL:
+        if(elevator.atSetpoint()) spitter.setDesiredState(SpitterStates.INTAKING);
+        elevator.setDesiredState(ElevatorStates.INTAKING);
+      case SCORING_LEVEL_ONE:
+        if(elevator.atSetpoint()) spitter.setDesiredState(SpitterStates.RUNNING);
+        elevator.setDesiredState(ElevatorStates.L1);
+        break;
+      case SCORING_LEVEL_TWO:
+        if(elevator.atSetpoint()) spitter.setDesiredState(SpitterStates.RUNNING);
+        elevator.setDesiredState(ElevatorStates.L2);
+      case INTAKING_ALGAE:
+        algaeIntake.setDesiredState(AlgaeIntakeStates.INTAKING);
+        pivot.setDesiredState(PivotStates.INTAKING);
+        break;
+      case SCORING_ALGAE:
+        algaeIntake.setDesiredState(AlgaeIntakeStates.SCORING);
+        pivot.setDesiredState(PivotStates.SCORING);
         break;
 
       default:
@@ -127,7 +153,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
    * @param state Desired state
    */
   public void setDesiredState(ManagerStates state) {
-    if(this.desiredState != state) {
+    if(desiredState != state) {
       desiredState = state;
       handleStateTransition();
     }
@@ -163,5 +189,15 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     DRIVE,
     /** Locking the wheels in an X formation */
     LOCKED,
+    /** Moves elevator to intaking position, then activates spitter */
+    INTAKING_CORAL,
+    /** Moves elevator to l1 position, then activates spitter */
+    SCORING_LEVEL_ONE,
+    /** Moves elevator to l2 position, then activates spitter */
+    SCORING_LEVEL_TWO,
+    /** Intaking with the algae intake, also sets pivot position */
+    INTAKING_ALGAE,
+    /** Scoring with the algae intake, also sets pivot position */
+    SCORING_ALGAE;
   }
 }

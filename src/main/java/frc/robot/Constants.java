@@ -111,13 +111,13 @@ public abstract class Constants {
     public static final int FLIPPER_ID = 9995;
   }
 
-  public static abstract class RollerConstants {
-    public static final double ROLLER_SPEED = 0.2;
+  public static abstract class SpitterConstants {
+    public static final double SPITTER_SPEED = 1;
   }
 
   public static abstract class AlgaeIntakeConstants {
-    public static final double ALGAE_INTAKING_SPEED = 0.4;
-    public static final double ALGAE_SCORING_SPEED = 0.2;
+    public static final double ALGAE_INTAKING_SPEED = 1;
+    public static final double ALGAE_SCORING_SPEED = -1;
   }
 
   public static abstract class PivotConstants {
@@ -134,9 +134,10 @@ public abstract class Constants {
     
     public static final double ELEVATOR_MOVE_SPEED = 0.4;
 
+    public static final double INTAKING_POSITION = 0;
     public static final double HOME_POSITION = 0;
-    public static final double L2_POSITION = 7.483;
-    public static final double CLIMB_POSITION = 13;
+    public static final double L1_POSITION = 19;
+    public static final double L2_POSITION = 32;
   }
 
   public static abstract class OIConstants {

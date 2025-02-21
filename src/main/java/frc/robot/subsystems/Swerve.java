@@ -385,7 +385,6 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
   public void update() {
     switch(currentState) {
       case IDLE:
-        break;
       case BROKEN:
         break;
       case DRIVE:
@@ -426,8 +425,6 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
   public void handleStateTransition() {
     switch(desiredState) {
       case IDLE:
-        stop();
-        break;
       case BROKEN:
         stop();
         break;

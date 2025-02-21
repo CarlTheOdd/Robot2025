@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.utils.Utils;
 
 public class Elevator extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
   private boolean initialized = false, status = false;
@@ -19,7 +20,7 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
 
   private static Elevator m_instance;
 
-  private PIDController pid;
+  private PIDController posController;
 
   private ElevatorStates currentState = ElevatorStates.IDLE, desiredState = ElevatorStates.IDLE;
 
@@ -27,8 +28,8 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
     motor1 = new SparkMax(CANConstants.ELEVATOR_MOTOR_ONE_ID, MotorType.kBrushless);
     motor2 = new SparkMax(CANConstants.ELEVATOR_MOTOR_TWO_ID, MotorType.kBrushless);
 
-    pid = new PIDController(0.05, 0, 0);
-    pid.setTolerance(3);
+    posController = new PIDController(0.05, 0, 0);
+    posController.setTolerance(3);
 
     initialized = true;
   }
@@ -49,30 +50,12 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
     motor2.set(speed);
   }
 
-  public void goToHomePos() {
-    pid.setSetpoint(ElevatorConstants.HOME_POSITION);
-
-    if(!pid.atSetpoint()) {
-      setSpeed(pid.calculate(motor1.getEncoder().getPosition()));
-    }
+  public boolean atSetpoint() {
+    return posController.atSetpoint();
   }
 
-  public void goToL2Pos() {
-    double setpoint = (ElevatorConstants.L2_POSITION / ElevatorConstants.ELEVATOR_PULLY_CIRCUMFERENCE) * ElevatorConstants.ELEVATOR_GEAR_RATIO;
-    pid.setSetpoint(setpoint);
-
-    if(!pid.atSetpoint()) {
-      setSpeed(pid.calculate(motor1.getEncoder().getPosition()));
-    }
-  }
-
-  public void goToClimbPos() {
-    double setpoint = (ElevatorConstants.CLIMB_POSITION / ElevatorConstants.ELEVATOR_PULLY_CIRCUMFERENCE) * ElevatorConstants.ELEVATOR_GEAR_RATIO;
-    pid.setSetpoint(setpoint);
-    
-    if(!pid.atSetpoint()) {
-      setSpeed(pid.calculate(motor1.getEncoder().getPosition()));
-    }
+  public double getEncoder() {
+    return (motor1.getEncoder().getPosition() + motor2.getEncoder().getPosition()) / 2;
   }
 
   @Override
@@ -97,17 +80,15 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
   public void update() {
     switch(currentState) {
       case IDLE:
+        if(!atSetpoint()) setDesiredState(ElevatorStates.HOME);
         break;
       case BROKEN:
         break;
+      case INTAKING:
       case HOME:
-        goToHomePos();
-        break;
+      case L1:
       case L2:
-        goToL2Pos();
-        break;
-      case CLIMBING:
-        goToClimbPos();
+        if(!atSetpoint()) setSpeed(Utils.normalize(posController.calculate(getEncoder())));
         break;
 
       default:
@@ -128,11 +109,16 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
       case BROKEN:
         stop();
         break;
+      case INTAKING:
+        posController.setSetpoint(ElevatorConstants.INTAKING_POSITION);
       case HOME:
+        posController.setSetpoint(ElevatorConstants.HOME_POSITION);
+        break;
+      case L1:
+        posController.setSetpoint(ElevatorConstants.L1_POSITION);
         break;
       case L2:
-        break;
-      case CLIMBING:
+        posController.setSetpoint(ElevatorConstants.L2_POSITION);
         break;
 
       default:
@@ -156,8 +142,9 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
   public enum ElevatorStates {
     IDLE,
     BROKEN,
+    INTAKING,
     HOME,
-    L2,
-    CLIMBING;
+    L1,
+    L2;
   }
 }

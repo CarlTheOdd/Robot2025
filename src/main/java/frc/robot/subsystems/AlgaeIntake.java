@@ -66,7 +66,6 @@ public class AlgaeIntake extends SubsystemBase implements CheckableSubsystem, St
   public void update() {
     switch(currentState) {
       case IDLE:
-        break;
       case BROKEN:
         break;
       case INTAKING:
@@ -89,13 +88,10 @@ public class AlgaeIntake extends SubsystemBase implements CheckableSubsystem, St
   public void handleStateTransition() {
     switch(desiredState) {
       case IDLE:
-        stop();
-        break;
       case BROKEN:
         stop();
         break;
       case INTAKING:
-        break;
       case SCORING:
         break;
         

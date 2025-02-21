@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.PivotConstants;
+import frc.utils.Utils;
 
 // This is for the algae
 public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
@@ -21,7 +22,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
 
   private static Pivot m_instance;
 
-  private PIDController pid = new PIDController(0.01, 0, 0);
+  private PIDController angleController = new PIDController(0.1, 0, 0);
 
   private PivotStates desiredState = PivotStates.IDLE, currentState = PivotStates.IDLE;
 
@@ -29,7 +30,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   public Pivot() {
     motor = new SparkMax(CANConstants.PIVOT_ID, MotorType.kBrushless);
 
-    pid.setTolerance(3);
+    angleController.setTolerance(3);
 
     initialized = true;
   }
@@ -40,30 +41,6 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     }
 
     return m_instance;
-  }
-
-  public void store() {
-    pid.setSetpoint(PivotConstants.HOME_ROTATION * PivotConstants.PIVOT_GEAR_RATIO);
-
-    if(!pid.atSetpoint()) {
-      motor.set(pid.calculate(motor.getEncoder().getPosition()));
-    }
-  }
-
-  public void score() {
-    pid.setSetpoint(PivotConstants.SCORE_ROTATION * PivotConstants.PIVOT_GEAR_RATIO);
-
-    if(!pid.atSetpoint()) {
-      motor.set(pid.calculate(motor.getEncoder().getPosition()));
-    }
-  }
-
-  public void intake() {
-    pid.setSetpoint(PivotConstants.INTAKE_ROTATION * PivotConstants.PIVOT_GEAR_RATIO);
-
-    if(!pid.atSetpoint()) {
-      motor.set(pid.calculate(motor.getEncoder().getPosition()));
-    }
   }
 
   @Override
@@ -89,17 +66,14 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   public void update() {
     switch(currentState) {
       case IDLE:
+        setDesiredState(PivotStates.STORED);
         break;
       case BROKEN:
         break;
       case STORED:
-        store();
-        break;
       case SCORING:
-        score();
-        break;
       case INTAKING:
-        intake();
+        motor.set(Utils.normalize(angleController.calculate(motor.getEncoder().getPosition())));
         break;
 
       default:
@@ -115,16 +89,17 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   public void handleStateTransition() {
     switch(desiredState) {
       case IDLE:
-        stop();
-        break;
       case BROKEN:
         stop();
         break;
       case STORED:
+        angleController.setSetpoint(PivotConstants.HOME_ROTATION);
         break;
       case SCORING:
+        angleController.setSetpoint(PivotConstants.SCORE_ROTATION);
         break;
       case INTAKING:
+        angleController.setSetpoint(PivotConstants.INTAKE_ROTATION);
         break;
 
       default:
