@@ -85,7 +85,7 @@ public class RobotContainer {
           m_Manager.pivot.setDesiredState(PivotStates.STORED);
         }
       },
-      m_Manager.pivot
+      m_controller.rightBumper().getAsBoolean() ? m_Manager.elevator : m_Manager.pivot
     ));
 
     // Sets algae intake to intaking position
@@ -98,7 +98,7 @@ public class RobotContainer {
           m_Manager.pivot.setDesiredState(PivotStates.INTAKING);
         }
       },
-      m_Manager.pivot
+      m_controller.rightBumper().getAsBoolean() ? m_Manager.elevator : m_Manager.pivot
     ));
 
     // Sets algae intake to scoring position
@@ -111,7 +111,7 @@ public class RobotContainer {
           m_Manager.pivot.setDesiredState(PivotStates.SCORING);
         }
       },
-      m_Manager.pivot
+      m_controller.rightBumper().getAsBoolean() ? m_Manager.elevator : m_Manager.pivot
     ));
   }
 
