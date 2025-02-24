@@ -125,6 +125,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
       case INTAKING_CORAL:
         if(elevator.atSetpoint()) spitter.setDesiredState(SpitterStates.INTAKING);
         elevator.setDesiredState(ElevatorStates.INTAKING);
+        break;
       case SCORING_LEVEL_ONE:
         if(elevator.atSetpoint()) spitter.setDesiredState(SpitterStates.RUNNING);
         elevator.setDesiredState(ElevatorStates.L1);

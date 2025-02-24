@@ -5,10 +5,15 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.utils.Utils;
@@ -27,6 +32,15 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
   public Elevator() {
     motor1 = new SparkMax(CANConstants.ELEVATOR_MOTOR_ONE_ID, MotorType.kBrushless);
     motor2 = new SparkMax(CANConstants.ELEVATOR_MOTOR_TWO_ID, MotorType.kBrushless);
+
+    SparkMaxConfig elevatorConfig = new SparkMaxConfig();
+
+    elevatorConfig.idleMode(IdleMode.kBrake)
+      .smartCurrentLimit(Constants.CURRENT_LIMIT_NEO)
+      .encoder.positionConversionFactor(ElevatorConstants.ELEVATOR_MOTOR_REDUCTION);
+
+    motor1.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    motor2.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     posController = new PIDController(0.05, 0, 0);
     posController.setTolerance(3);

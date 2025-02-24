@@ -5,10 +5,15 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.SpitterConstants;
 
@@ -17,8 +22,8 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
   private boolean status = false;
   private boolean initialized = false;
 
-  private SparkMax motor;
-  private final DigitalInput proximitySensor = new DigitalInput(0);
+  private SparkMax motor1, motor2;
+  private final DigitalInput proximitySensor;
 
   private static Spitter m_instance;
 
@@ -26,10 +31,20 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
 
   /** Creates a new Rollers. */
   public Spitter() {
-    motor = new SparkMax(CANConstants.ROLLER_ID, MotorType.kBrushless);
+    motor1 = new SparkMax(CANConstants.ROLLER_MOTOR_ONE_ID, MotorType.kBrushless);
+    motor2 = new SparkMax(CANConstants.ROLLER_MOTOR_TWO_ID, MotorType.kBrushless);
+
+    SparkMaxConfig spitterConfig = new SparkMaxConfig();
+
+    spitterConfig.idleMode(IdleMode.kBrake)
+      .smartCurrentLimit(Constants.CURRENT_LIMIT_NEO);
+
+    motor1.configure(spitterConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    motor2.configure(spitterConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    proximitySensor = new DigitalInput(CANConstants.PROXIMITY_SENSOR_CHANNEL);
 
     initialized = true;
-    status = true;
   }
   
   public static Spitter getInstance() {
@@ -41,12 +56,13 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
   }
 
   public void runSpitter() {
-    motor.set(SpitterConstants.SPITTER_SPEED);
+    motor1.set(SpitterConstants.SPITTER_SPEED);
+    motor2.set(-SpitterConstants.SPITTER_SPEED);
   }
 
   @Override
   public void stop() {
-    motor.stopMotor();
+    motor1.stopMotor();
   }
 
   @Override
@@ -56,7 +72,7 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
 
   @Override
   public boolean checkSubsystem() {
-    status = getInitialized();
+    status &= getInitialized();
 
     return status;
   }

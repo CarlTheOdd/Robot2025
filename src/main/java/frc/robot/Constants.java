@@ -24,6 +24,8 @@ public abstract class Constants {
   
   public static final double LIMELIGHT_HEIGHT = 0;
   public static final double APRILTAG_HEIGHT = 0;
+  public static final int CURRENT_LIMIT_NEO = 40;
+  public static final int CURRENT_LIMIT_550 = 30;
 
   public static abstract class SwerveConstants {
     public static final RobotConfig PP_CONFIG = new RobotConfig(
@@ -100,10 +102,13 @@ public abstract class Constants {
     public static final int BL_ENCODER_ANALOG_INPUT_CHANNEL = 2;
     public static final int BR_ENCODER_ANALOG_INPUT_CHANNEL = 3;
 
+    public static final int PROXIMITY_SENSOR_CHANNEL = 0;
+
     // Gyro
     public static final int GYRO_ID = 10;
 
-    public static final int ROLLER_ID = 9990;
+    public static final int ROLLER_MOTOR_ONE_ID = 9990;
+    public static final int ROLLER_MOTOR_TWO_ID = 9996;
     public static final int PIVOT_ID = 9991;
     public static final int ALGAE_INTAKE_ID = 9992;
     public static final int ELEVATOR_MOTOR_ONE_ID = 9993;
@@ -131,6 +136,7 @@ public abstract class Constants {
   public static abstract class ElevatorConstants {
     public static final double ELEVATOR_PULLY_CIRCUMFERENCE = 1.46 * Math.PI;
     public static final double ELEVATOR_GEAR_RATIO = 6;
+    public static final double ELEVATOR_MOTOR_REDUCTION = 1;
     
     public static final double ELEVATOR_MOVE_SPEED = 0.4;
 

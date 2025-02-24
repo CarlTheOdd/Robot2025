@@ -5,9 +5,14 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.AlgaeIntakeConstants;
 import frc.robot.Constants.CANConstants;
 
@@ -23,6 +28,13 @@ public class AlgaeIntake extends SubsystemBase implements CheckableSubsystem, St
   public AlgaeIntake() {
     motor = new SparkMax(CANConstants.ALGAE_INTAKE_ID, MotorType.kBrushless);
 
+    SparkMaxConfig algaeIntakeConfig = new SparkMaxConfig();
+    
+    algaeIntakeConfig.idleMode(IdleMode.kBrake)
+      .smartCurrentLimit(Constants.CURRENT_LIMIT_550);
+    
+    motor.configure(algaeIntakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
     initialized = true;
   }
 
@@ -37,12 +49,8 @@ public class AlgaeIntake extends SubsystemBase implements CheckableSubsystem, St
   @Override
   public void periodic() {}
 
-  public void intake() {
-    motor.set(AlgaeIntakeConstants.ALGAE_INTAKING_SPEED);
-  }
-
-  public void score() {
-    motor.set(AlgaeIntakeConstants.ALGAE_SCORING_SPEED);
+  public void setSpeed(double speed) {
+    motor.set(speed);
   }
 
   @Override
@@ -69,10 +77,10 @@ public class AlgaeIntake extends SubsystemBase implements CheckableSubsystem, St
       case BROKEN:
         break;
       case INTAKING:
-        intake();
+        setSpeed(AlgaeIntakeConstants.ALGAE_INTAKING_SPEED);
         break;
       case SCORING:
-        score();
+        setSpeed(AlgaeIntakeConstants.ALGAE_SCORING_SPEED);
         break;
 
       default:
