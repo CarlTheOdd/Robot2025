@@ -130,13 +130,12 @@ public abstract class Constants {
     public static final double INTAKE_ROTATION = 0.125;
     public static final double SCORE_ROTATION = 0.25;
 
-    public static final double PIVOT_GEAR_RATIO = 7;
+    public static final double PIVOT_MOTOR_REDUCTION = (81 * 4) / 3;
   }
 
   public static abstract class ElevatorConstants {
     public static final double ELEVATOR_PULLY_CIRCUMFERENCE = 1.46 * Math.PI;
-    public static final double ELEVATOR_GEAR_RATIO = 6;
-    public static final double ELEVATOR_MOTOR_REDUCTION = 1;
+    public static final double ELEVATOR_MOTOR_REDUCTION = 135 / ELEVATOR_PULLY_CIRCUMFERENCE;
     
     public static final double ELEVATOR_MOVE_SPEED = 0.4;
 

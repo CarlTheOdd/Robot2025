@@ -36,7 +36,8 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     SparkMaxConfig pivotConfig = new SparkMaxConfig();
 
     pivotConfig.idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(Constants.CURRENT_LIMIT_NEO);
+      .smartCurrentLimit(Constants.CURRENT_LIMIT_NEO)
+      .encoder.positionConversionFactor(PivotConstants.PIVOT_MOTOR_REDUCTION);
 
     angleController = new PIDController(0.01, 0, 0);
     angleController.setTolerance(3);
