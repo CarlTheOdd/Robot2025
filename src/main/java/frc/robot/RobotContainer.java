@@ -6,22 +6,22 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.net.WebServer;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
-import frc.robot.subsystems.Manager;
-import frc.robot.subsystems.Manager.ManagerStates;
-import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.Spitter;
-import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Manager;
+import frc.robot.subsystems.Spitter;
+import frc.robot.subsystems.Manager.ManagerStates;
+import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Swerve;
+import frc.utils.Utils.ElasticUtil;
 
 public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
@@ -40,18 +40,18 @@ public class RobotContainer {
   }
 
   private void configureElastic() {
-    // The main tab is used during a match to display relavent information
-    ShuffleboardTab main = Shuffleboard.getTab("Main");
-    main.addString("Manager State", () -> m_Manager.getState().toString());
-    main.addString("Swerve State", () -> Swerve.getInstance().getState().toString());
-    main.addString("Roller State", () -> Spitter.getInstance().getState().toString());
-    main.addString("Pivot State", () -> Pivot.getInstance().getState().toString());
-    main.addString("Algae Intake State", () -> AlgaeIntake.getInstance().getState().toString());
-    main.addString("Elevator State", () -> Elevator.getInstance().getState().toString());
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+
+    ElasticUtil.putString("Manager State", () -> m_Manager.getState().toString());
+    ElasticUtil.putString("Swerve State", () -> Swerve.getInstance().getState().toString());
+    ElasticUtil.putString("Spitter State", () -> Spitter.getInstance().getState().toString());
+    ElasticUtil.putString("Pivot State", () -> Pivot.getInstance().getState().toString());
+    ElasticUtil.putString("Elevator State", () -> Elevator.getInstance().getState().toString());
+    ElasticUtil.putString("Algae Intake State", () -> AlgaeIntake.getInstance().getState().toString());
   }
 
   private void configureBindings() {
-    m_Manager.setDefaultCommand(new RunCommand(() -> m_Manager.update(), m_Manager));
+    m_Manager.setDefaultCommand(new InstantCommand(() -> m_Manager.update(), m_Manager));
 
     // Stops movement - Works
     new JoystickButton(OI.driverJoytick, 1)
@@ -60,27 +60,27 @@ public class RobotContainer {
 
     // Intakes coral spitter, moving elevator to intaking position
     m_controller.y()
-      .onTrue(new RunCommand(() -> m_Manager.setDesiredState(ManagerStates.INTAKING_CORAL)))
-      .onFalse(new RunCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE)));
+      .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.INTAKING_CORAL)))
+      .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE)));
 
     // Runs coral spitter, moving elevator to level one
     m_controller.x()
-      .onTrue(new RunCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_LEVEL_ONE)))
-      .onFalse(new RunCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE)));
+      .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_LEVEL_ONE)))
+      .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE)));
 
     m_controller.b()
-      .onTrue(new RunCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_LEVEL_TWO)))
-      .onFalse(new RunCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE)));
+      .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_LEVEL_TWO)))
+      .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE)));
 
     // Intakes with algae intake, and moves pivot to intaking position
     m_controller.leftBumper()
-      .onTrue(new RunCommand(() -> m_Manager.setDesiredState(ManagerStates.INTAKING_ALGAE), m_Manager))
-      .onFalse(new RunCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+      .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.INTAKING_ALGAE), m_Manager))
+      .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
 
     // Scores with algae intake, and moves pivot to scoring position
     m_controller.leftTrigger()
-      .onTrue(new RunCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_ALGAE), m_Manager))
-      .onFalse(new RunCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+      .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_ALGAE), m_Manager))
+      .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
   }
 
   public Command getAutonomousCommand() {

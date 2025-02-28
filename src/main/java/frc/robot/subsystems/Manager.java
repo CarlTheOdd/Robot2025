@@ -121,25 +121,44 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
         break;
       case LOCKED:
         swerve.setDesiredState(SwerveStates.LOCKED);
+        spitter.setDesiredState(SpitterStates.IDLE);
+        pivot.setDesiredState(PivotStates.STORED);
+        algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
+        elevator.setDesiredState(ElevatorStates.HOME);
         break;
       case INTAKING_CORAL:
+        swerve.setDesiredState(SwerveStates.DRIVE);
         if(elevator.atSetpoint()) spitter.setDesiredState(SpitterStates.INTAKING);
+        pivot.setDesiredState(PivotStates.STORED);
+        algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
         elevator.setDesiredState(ElevatorStates.INTAKING);
         break;
       case SCORING_LEVEL_ONE:
+        swerve.setDesiredState(SwerveStates.DRIVE);
         if(elevator.atSetpoint()) spitter.setDesiredState(SpitterStates.RUNNING);
+        pivot.setDesiredState(PivotStates.STORED);
+        algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
         elevator.setDesiredState(ElevatorStates.L1);
         break;
       case SCORING_LEVEL_TWO:
+        swerve.setDesiredState(SwerveStates.DRIVE);
         if(elevator.atSetpoint()) spitter.setDesiredState(SpitterStates.RUNNING);
+        pivot.setDesiredState(PivotStates.STORED);
+        algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
         elevator.setDesiredState(ElevatorStates.L2);
       case INTAKING_ALGAE:
-        algaeIntake.setDesiredState(AlgaeIntakeStates.INTAKING);
+        swerve.setDesiredState(SwerveStates.DRIVE);
+        spitter.setDesiredState(SpitterStates.IDLE);
         pivot.setDesiredState(PivotStates.INTAKING);
+        algaeIntake.setDesiredState(AlgaeIntakeStates.INTAKING);
+        elevator.setDesiredState(ElevatorStates.HOME);
         break;
       case SCORING_ALGAE:
-        algaeIntake.setDesiredState(AlgaeIntakeStates.SCORING);
+        swerve.setDesiredState(SwerveStates.DRIVE);
+        spitter.setDesiredState(SpitterStates.IDLE);
         pivot.setDesiredState(PivotStates.SCORING);
+        algaeIntake.setDesiredState(AlgaeIntakeStates.SCORING);
+        elevator.setDesiredState(ElevatorStates.HOME);
         break;
 
       default:
