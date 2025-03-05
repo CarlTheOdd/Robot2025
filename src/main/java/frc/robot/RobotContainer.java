@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -35,6 +36,7 @@ public class RobotContainer {
     // this year.
     autoChooser = AutoBuilder.buildAutoChooser();
 
+    configureAutos();
     configureElastic();
     configureBindings();
   }
@@ -81,6 +83,11 @@ public class RobotContainer {
     m_controller.leftTrigger()
       .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_ALGAE), m_Manager))
       .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+  }
+
+  private void configureAutos() {
+    NamedCommands.registerCommand("scoreLvl1", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_LEVEL_ONE), m_Manager));
+    NamedCommands.registerCommand("scoreLvl2", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_LEVEL_TWO), m_Manager));
   }
 
   public Command getAutonomousCommand() {

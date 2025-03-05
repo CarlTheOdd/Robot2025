@@ -87,7 +87,11 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
       case BROKEN:
         break;
       case INTAKING:
-        if(!proximitySensor.get()) runSpitter();
+        if(!proximitySensor.get()) {
+          runSpitter();
+        } else {
+          setDesiredState(SpitterStates.IDLE);
+        }
       case RUNNING:
         runSpitter();
         break;

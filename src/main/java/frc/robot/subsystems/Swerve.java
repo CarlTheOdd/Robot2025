@@ -92,7 +92,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
     // Configure AutoBuilder last
     AutoBuilder.configure(
         this::getPose, // Robot pose supplier
-        this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+        this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         (speeds, feedforwards) -> drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
         new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
@@ -169,7 +169,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
    *
    * @param pose The pose to which to set the odometry.
    */
-  public void resetOdometry(Pose2d pose) {
+  public void resetPose(Pose2d pose) {
     m_odometry.resetPosition(
         Rotation2d.fromDegrees(getHeading()),
         new SwerveModulePosition[] {
@@ -185,7 +185,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
    * Resets the odometry to 0 degrees and 0 velocity
    */
   public void resetOdometry() {
-    resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
+    resetPose(new Pose2d(0, 0, new Rotation2d(0)));
   }
 
   /**

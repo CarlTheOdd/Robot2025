@@ -33,7 +33,7 @@ public abstract class Constants {
         11.657,
         new ModuleConfig(
             0.102,
-            5.45,
+            5.7,
             1.2,
             DCMotor.getKrakenX60(1),
             80,
@@ -68,7 +68,7 @@ public abstract class Constants {
 
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double MAX_SPEED_METERS_PER_SECOND = 4.8;
+    public static final double MAX_SPEED_METERS_PER_SECOND = 5.7;
     public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 2 * Math.PI; // radians per second
   }
 

@@ -1,0 +1,70 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.1,
+        "y": 7.25
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 8.573634509550306,
+        "y": 7.25
+      },
+      "isLocked": true,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.8360000000050505,
+        "y": 6.891500000003925
+      },
+      "prevControl": {
+        "x": 6.786000000005051,
+        "y": 7.223000000003924
+      },
+      "nextControl": {
+        "x": 2.6552750763063235,
+        "y": 6.520776762975142
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.95,
+        "y": 2.75
+      },
+      "prevControl": {
+        "x": 1.2297499999999992,
+        "y": 3.296000000000001
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.77952,
+    "maxAcceleration": 3.78,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 59.5366921389171
+  },
+  "reversed": false,
+  "folder": "Coral P1 B",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}
