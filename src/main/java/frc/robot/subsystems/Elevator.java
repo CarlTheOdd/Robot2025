@@ -17,6 +17,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.utils.Utils;
+import frc.utils.Utils.ElasticUtil;
 
 public class Elevator extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
   private boolean initialized = false, status = false;
@@ -26,6 +27,7 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
   private static Elevator m_instance;
 
   private PIDController posController;
+  private double p = 2, i = 0, d = 0;
 
   private ElevatorStates currentState = ElevatorStates.IDLE, desiredState = ElevatorStates.IDLE;
 
@@ -42,8 +44,19 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
     motor1.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     motor2.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    posController = new PIDController(0.05, 0, 0);
-    posController.setTolerance(3);
+    posController = new PIDController(p, i, d);
+    posController.setTolerance(ElevatorConstants.PID_ERROR_TOLERANCE);
+
+    motor1.getEncoder().setPosition(0);
+    motor2.getEncoder().setPosition(0);
+
+    ElasticUtil.putDouble("Elevator P", () -> this.p, value -> { this.p = value; });
+    ElasticUtil.putDouble("Elevator I", () -> this.i, value -> { this.i = value; });
+    ElasticUtil.putDouble("Elevator D", () -> this.d, value -> { this.d = value; });
+    ElasticUtil.putDouble("Elevator Position", this::getEncoder);
+    ElasticUtil.putDouble("Elevator Pos 1", motor1.getEncoder()::getPosition);
+    ElasticUtil.putDouble("Elevator Pos 2", motor2.getEncoder()::getPosition);
+    ElasticUtil.putBoolean("Elevator At Setpoint", this::atSetpoint);
 
     initialized = true;
   }
@@ -61,7 +74,7 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
 
   public void setSpeed(double speed) {
     motor1.set(speed);
-    motor2.set(speed);
+    motor2.set(-speed);
   }
 
   public boolean atSetpoint() {
@@ -92,6 +105,8 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
 
   @Override
   public void update() {
+    posController.setPID(p, i, d);
+
     switch(currentState) {
       case IDLE:
         if(!atSetpoint()) setDesiredState(ElevatorStates.HOME);

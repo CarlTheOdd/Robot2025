@@ -15,6 +15,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.utils.Utils;
+import frc.utils.Utils.ElasticUtil;
 
 // This is for the algae
 public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
@@ -26,6 +27,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   private static Pivot m_instance;
 
   private PIDController angleController;
+  private double p = 0.01, i = 0, d = 0;
 
   private PivotStates desiredState = PivotStates.IDLE, currentState = PivotStates.IDLE;
 
@@ -36,11 +38,15 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     SparkMaxConfig pivotConfig = new SparkMaxConfig();
 
     pivotConfig.idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(Constants.CURRENT_LIMIT_NEO)
-      .encoder.positionConversionFactor(PivotConstants.PIVOT_MOTOR_REDUCTION);
+      .smartCurrentLimit(Constants.CURRENT_LIMIT_NEO);
 
-    angleController = new PIDController(0.01, 0, 0);
-    angleController.setTolerance(3);
+    angleController = new PIDController(p, i, d);
+    angleController.setTolerance(PivotConstants.PID_ERROR_TOLERANCE);
+
+    ElasticUtil.putDouble("Pivot P", () -> this.p, value -> { this.p = value; });
+    ElasticUtil.putDouble("Pivot I", () -> this.i, value -> { this.i = value; });
+    ElasticUtil.putDouble("Pivot D", () -> this.d, value -> { this.d = value; });
+    ElasticUtil.putDouble("Pivot Position", motor.getEncoder()::getPosition);
 
     initialized = true;
   }

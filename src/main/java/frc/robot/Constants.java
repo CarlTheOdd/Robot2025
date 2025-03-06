@@ -127,22 +127,20 @@ public abstract class Constants {
 
   public static abstract class PivotConstants {
     public static final double HOME_ROTATION = 0;
-    public static final double INTAKE_ROTATION = 0.125;
-    public static final double SCORE_ROTATION = 0.25;
-
-    public static final double PIVOT_MOTOR_REDUCTION = (81 * 4) / 3;
+    public static final double INTAKE_ROTATION = 6;
+    public static final double SCORE_ROTATION = 0;
+    public static final double PID_ERROR_TOLERANCE = 0;
   }
 
   public static abstract class ElevatorConstants {
-    public static final double ELEVATOR_PULLY_CIRCUMFERENCE = 1.46 * Math.PI;
-    public static final double ELEVATOR_MOTOR_REDUCTION = 135 / ELEVATOR_PULLY_CIRCUMFERENCE;
-    
-    public static final double ELEVATOR_MOVE_SPEED = 0.4;
+    public static final double ELEVATOR_MOTOR_REDUCTION = (0.0185185185);
 
     public static final double INTAKING_POSITION = 0;
     public static final double HOME_POSITION = 0;
-    public static final double L1_POSITION = 19;
-    public static final double L2_POSITION = 32;
+    public static final double L1_POSITION = 1.7;
+    public static final double L2_POSITION = 2.5;
+
+    public static final double PID_ERROR_TOLERANCE = 0.01;
   }
 
   public static abstract class OIConstants {

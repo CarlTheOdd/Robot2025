@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "NE to Source 2 B"
+            "pathName": "NE to Source 1 B"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SW from Source 2 B"
+            "pathName": "NW from Source 1 B"
           }
         }
       ]
