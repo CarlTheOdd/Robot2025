@@ -4,12 +4,8 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.config.ModuleConfig;
-import com.pathplanner.lib.config.RobotConfig;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 /** 
@@ -28,22 +24,6 @@ public abstract class Constants {
   public static final int CURRENT_LIMIT_550 = 30;
 
   public static abstract class SwerveConstants {
-    public static final RobotConfig PP_CONFIG = new RobotConfig(
-        50,
-        11.657,
-        new ModuleConfig(
-            0.102,
-            5.7,
-            1.2,
-            DCMotor.getKrakenX60(1),
-            80,
-            1),
-        new Translation2d(0.4,0.4),
-        new Translation2d(0.4,-0.4),
-        new Translation2d(-0.4,0.4),
-        new Translation2d(-0.4,-0.4)
-    );
-
     // The speed modifier for the swerve drive as a percent
     public static final double SPEED_SCALE = 0.2;
 

@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "NE Side P2 B"
+            "pathName": "NE Side P2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "NE to Source 1 B"
+            "pathName": "NE to Source 1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "NW from Source 1 B"
+            "pathName": "NW from Source 1"
           }
         }
       ]

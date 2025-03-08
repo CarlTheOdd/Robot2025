@@ -7,19 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SE Side P1"
+            "pathName": "E Side P3"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "SE to Source 1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "NW from Source 1"
+            "name": "scoreLvl2"
           }
         }
       ]

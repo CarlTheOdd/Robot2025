@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SE Side P3 B"
+            "pathName": "SE Side P3"
           }
         },
         {
@@ -25,7 +25,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SE to Source 2 B"
+            "pathName": "SE to Source 2"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "W from Source 2 B"
+            "pathName": "W from Source 2"
           }
         }
       ]

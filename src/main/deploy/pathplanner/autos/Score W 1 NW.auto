@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "W Side P3 B"
+            "pathName": "W Side P3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "W to Source 1 B"
+            "pathName": "W to Source 1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "NW from Source 1 B"
+            "pathName": "NW from Source 1"
           }
         }
       ]

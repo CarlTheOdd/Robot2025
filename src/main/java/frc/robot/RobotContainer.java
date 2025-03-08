@@ -10,6 +10,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -25,17 +26,12 @@ import frc.robot.subsystems.Swerve;
 import frc.utils.Utils.ElasticUtil;
 
 public class RobotContainer {
-  private final SendableChooser<Command> autoChooser;
-
+  private SendableChooser<Command> autoChooser;
+  
   private final Manager m_Manager = new Manager();
   private final CommandXboxController m_controller = new CommandXboxController(OIConstants.XBOX_CONTROLLER_PORT);
 
   public RobotContainer() {
-    // This would throw an error no matter what
-    // in last year's code, so let's hope for better
-    // this year.
-    autoChooser = AutoBuilder.buildAutoChooser();
-
     configureAutos();
     configureElastic();
     configureBindings();
@@ -50,6 +46,9 @@ public class RobotContainer {
     ElasticUtil.putString("Pivot State", () -> Pivot.getInstance().getState().toString());
     ElasticUtil.putString("Elevator State", () -> Elevator.getInstance().getState().toString());
     ElasticUtil.putString("Algae Intake State", () -> AlgaeIntake.getInstance().getState().toString());
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("auto chooser", autoChooser);
   }
 
   private void configureBindings() {
