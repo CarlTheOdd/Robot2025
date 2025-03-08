@@ -89,6 +89,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("scoreLvl2", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_LEVEL_TWO), m_Manager));
     NamedCommands.registerCommand("scoreAlgae", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_ALGAE), m_Manager));
     NamedCommands.registerCommand("drive", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+    NamedCommands.registerCommand("idle", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.IDLE), m_Manager));
   }
 
   public Command getAutonomousCommand() {
