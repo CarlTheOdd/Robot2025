@@ -3,9 +3,9 @@
   "robotLength": 0.927,
   "holonomicMode": true,
   "pathFolders": [
-    "Coral P1",
-    "Coral P2",
-    "Coral P3",
+    "Coral L",
+    "Coral M",
+    "Coral R",
     "From Source 1",
     "From Source 2",
     "To Source 1",

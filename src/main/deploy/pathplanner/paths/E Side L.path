@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.602944143565463,
+        "x": 8.574965213426022,
         "y": 7.25
       },
       "isLocked": true,
@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.65,
-        "y": 5.15
+        "x": 5.87,
+        "y": 4.2
       },
       "prevControl": {
-        "x": 4.020500000000661,
-        "y": 5.910899590160798
+        "x": 5.967500000003627,
+        "y": 6.5204999999972975
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.16668525236837
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Coral P1",
+  "folder": "Coral L",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
