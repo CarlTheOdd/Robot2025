@@ -22,6 +22,7 @@ public abstract class Constants {
   public static final double APRILTAG_HEIGHT = 0;
   public static final int CURRENT_LIMIT_NEO = 40;
   public static final int CURRENT_LIMIT_550 = 30;
+  public static final String LIMELIGHT_NAME = "limelight-shooter";
 
   public static abstract class SwerveConstants {
     // The speed modifier for the swerve drive as a percent
@@ -50,6 +51,7 @@ public abstract class Constants {
     // the robot, rather the allowed maximum speeds
     public static final double MAX_SPEED_METERS_PER_SECOND = 5.7;
     public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 2 * Math.PI; // radians per second
+    public static final double MAX_DEGREES_PER_SCHEDULER_LOOP = MAX_ANGULAR_SPEED_RADIANS_PER_SECOND * (180 / Math.PI) / 1000 * 20 * 0.7;
   }
 
   public static abstract class ModuleConstants {
@@ -125,7 +127,14 @@ public abstract class Constants {
 
   public static abstract class OIConstants {
     public static final int DRIVER_CONTROLLER_PORT = 0;
-    public static final int XBOX_CONTROLLER_PORT = 1;
+    public static final int AUX_CONTROLLER_PORT = 1;
     public static final double DRIVER_DEADBAND = 0.05;
+  }
+
+  public static abstract class LimelightConstants {
+    public static final double LIMELIGHT_ANGLE = 0;
+    public static final double LIMELIGHT_HEIGHT = 30;
+
+    public static final double REEF_TAG_HEIGHT = 12.125;
   }
 }

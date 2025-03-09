@@ -4,7 +4,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
 
 /** The Operating Interface 
@@ -14,12 +16,38 @@ public abstract class OI {
   private OI() {}
 
   // The Driver's joystick
-  public static final Joystick driverJoytick = new Joystick(OIConstants.DRIVER_CONTROLLER_PORT);
+  public static final CommandXboxController driverController = new CommandXboxController(OIConstants.DRIVER_CONTROLLER_PORT);
+  public static final CommandXboxController auxController = new CommandXboxController(OIConstants.AUX_CONTROLLER_PORT);
+
+  private static void rumbleAux() {
+    Thread rumble = new Thread(() -> {
+      auxController.setRumble(RumbleType.kBothRumble, 0.9);
+      Timer.delay(0.5);
+      auxController.setRumble(RumbleType.kBothRumble, 0);
+    });
+
+    rumble.start();
+  }
+
+  private static void rumbleDriver() {
+    Thread rumble = new Thread(() -> {
+      driverController.setRumble(RumbleType.kBothRumble, 0.9);
+      Timer.delay(0.5);
+      driverController.setRumble(RumbleType.kBothRumble, 0);
+    });
+
+    rumble.start();
+  }
+
+  public static void rumbleControllers() {
+    rumbleAux();
+    rumbleDriver();
+  }
 
   public static double[] getMappedJoysticks() {
     // Convert XY to polar for mapping
-    double inputTranslationDir = Math.atan2(driverJoytick.getY(), driverJoytick.getX());
-    double inputTranslationMag = Math.sqrt(Math.pow(driverJoytick.getY(), 2) + Math.pow(driverJoytick.getX(), 2));
+    double inputTranslationDir = Math.atan2(driverController.getLeftY(), driverController.getLeftX());
+    double inputTranslationMag = Math.sqrt(Math.pow(driverController.getLeftY(), 2) + Math.pow(driverController.getLeftX(), 2));
 
     // Deadband
     if(inputTranslationMag <= OIConstants.DRIVER_DEADBAND) {

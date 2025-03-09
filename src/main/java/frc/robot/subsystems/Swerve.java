@@ -21,11 +21,15 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.CANConstants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants;
 import frc.robot.OI;
+import frc.utils.Utils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
@@ -77,8 +81,17 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
 
   private SwerveStates desiredState = SwerveStates.IDLE, currentState = SwerveStates.IDLE;
 
-  // private double desiredHeading;
+  private double targetHeading;
+  private boolean trackingTag = false;
+
+  private double desiredHeading;
+  private boolean activelyTurning;
   private PIDController angleController = new PIDController(0.009, 0, 0);
+  private PIDController distanceController = new PIDController(0.03, 0, 0);
+  private PIDController xController = new PIDController(0.03, 0, 0);
+  private PIDController yController = new PIDController(0.03, 0, 0);
+
+  private double p = 0.009, i = 0, d = 0;
 
   private DoubleSupplier aimingAngle;
 
@@ -89,6 +102,14 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
 
     angleController.setTolerance(1);
     angleController.enableContinuousInput(0, 360);
+    angleController.setPID(p, i, d);
+
+    distanceController.setTolerance(1);
+    xController.setTolerance(1);
+    yController.setTolerance(1);
+
+    xController.setSetpoint(0);
+    yController.setSetpoint(0);
 
     try {
       RobotConfig PP_CONFIG = RobotConfig.fromGUISettings();
@@ -211,11 +232,15 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
    * @param t ChassisSpeeds relative to the robot
    */
   private void drive(ChassisSpeeds t) {
-    var swerveModuleStates = SwerveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(t);
-    m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    m_frontRight.setDesiredState(swerveModuleStates[1]);
-    m_rearLeft.setDesiredState(swerveModuleStates[2]);
-    m_rearRight.setDesiredState(swerveModuleStates[3]);
+    // var swerveModuleStates = SwerveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(t);
+    drive(t.vxMetersPerSecond, t.vyMetersPerSecond, t.omegaRadiansPerSecond, false);
+    System.out.println("vx: " + t.vxMetersPerSecond);
+    System.out.println("vy: " + t.vyMetersPerSecond);
+    System.out.println("vr: " + t.omegaRadiansPerSecond);
+    // m_frontLeft.setDesiredState(swerveModuleStates[0]);
+    // m_frontRight.setDesiredState(swerveModuleStates[1]);
+    // m_rearLeft.setDesiredState(swerveModuleStates[2]);
+    // m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
   /**
@@ -231,13 +256,28 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
     // Convert the commanded speeds into the correct units for the drivetrain and scaling the speed
     double xSpeedDelivered = xSpeed * SwerveConstants.MAX_SPEED_METERS_PER_SECOND;
     double ySpeedDelivered = ySpeed * SwerveConstants.MAX_SPEED_METERS_PER_SECOND;
-    double rotDelivered = rot * SwerveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
+    
+    if(activelyTurning) {
+      desiredHeading = desiredHeading - (rot * SwerveConstants.MAX_DEGREES_PER_SCHEDULER_LOOP);
+    } else if(rot != 0) {
+      desiredHeading = getHeading() - (rot * SwerveConstants.MAX_DEGREES_PER_SCHEDULER_LOOP);
+    } else {}
+
+    desiredHeading = MathUtil.inputModulus(desiredHeading, 0, 360);
+
+    angleController.setPID(p, i, d);
+
+    double rotDelivered = Utils.normalize(angleController.calculate(getHeading(), desiredHeading)) * SwerveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
+
+    rotDelivered = rotDelivered * (SwerveConstants.GYRO_REVERSED ? -1 : 1);
 
     var swerveModuleStates = SwerveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(getHeading()))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     
+    activelyTurning = rot != 0 ? true : false;
+
     setModuleStates(swerveModuleStates);
   }
 
@@ -258,6 +298,18 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
     rot *= speedScale + ((1 - speedScale) / 2);
 
     drive(xSpeed, ySpeed, rot, fieldRelative);
+  }
+
+  public void drive(double xOffset, double yOffset) {
+    drive(new ChassisSpeeds(
+      Utils.normalize(xController.calculate(xOffset)),
+      Utils.normalize(yController.calculate(yOffset)),
+      angleController.calculate(getHeading(), targetHeading)
+    ));
+  }
+
+  public void setTracking(boolean tracking) {
+    trackingTag = tracking;
   }
 
   /**
@@ -390,6 +442,11 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
    */
   @Override
   public void update() {
+    if((int) NetworkTableInstance.getDefault().getTable(Constants.LIMELIGHT_NAME).getEntry("tid").getInteger(-1) != -1 && !trackingTag) {
+      OI.rumbleControllers();
+      trackingTag = true;
+    }
+
     switch(currentState) {
       case IDLE:
       case BROKEN:
@@ -397,20 +454,24 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
       case DRIVE:
         if(DriverStation.isTeleopEnabled()) {
           drive(
-              MathUtil.applyDeadband(OI.driverJoytick.getY(), 0.05),
-              MathUtil.applyDeadband(OI.driverJoytick.getX(), 0.05),
-              MathUtil.applyDeadband(OI.driverJoytick.getZ(), 0.05),
+              MathUtil.applyDeadband(OI.driverController.getLeftY(), 0.05),
+              MathUtil.applyDeadband(OI.driverController.getLeftX(), 0.05),
+              MathUtil.applyDeadband(OI.driverController.getRightX(), 0.05),
               true, SwerveConstants.SPEED_SCALE);
         }
         break;
       case AIMING:
-        if(DriverStation.isTeleopEnabled()) {
-          drive(
-              -OI.getMappedJoysticks()[0],
-              -OI.getMappedJoysticks()[1],
-              -OI.mappingFunction(aimingAngle.getAsDouble()),
-              true, SwerveConstants.SPEED_SCALE);
-        }
+        double targetOffset = NetworkTableInstance.getDefault().getTable(Constants.LIMELIGHT_NAME).getEntry("ty").getDouble(0);
+        double totalOffset = (LimelightConstants.LIMELIGHT_ANGLE + targetOffset) * (3.14159 / 180);
+
+        double distanceToTag = (LimelightConstants.REEF_TAG_HEIGHT - LimelightConstants.LIMELIGHT_HEIGHT) / Math.tan(totalOffset);
+
+        distanceController.setSetpoint(distanceToTag);
+
+        double xOffset = distanceToTag * Math.sin(NetworkTableInstance.getDefault().getTable(Constants.LIMELIGHT_NAME).getEntry("tx").getDouble(0));
+        double yOffset = distanceToTag * Math.cos(NetworkTableInstance.getDefault().getTable(Constants.LIMELIGHT_NAME).getEntry("tx").getDouble(0));
+
+        drive(xOffset, yOffset);
         break;
       case LOCKED:
         setX();
@@ -438,7 +499,35 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
       case DRIVE:
         break;
       case AIMING:
-        angleController.setSetpoint(0);
+        switch((int) NetworkTableInstance.getDefault().getTable(Constants.LIMELIGHT_NAME).getEntry("tid").getInteger(-1)) {
+          case 6:
+          case 19:
+            targetHeading = 45;
+            break;
+          case 7:
+          case 18:
+            targetHeading = 0;
+            break;
+          case 8:
+          case 17:
+            targetHeading = 315;
+            break;
+          case 9:
+          case 22:
+            targetHeading = 225;
+            break;
+          case 10:
+          case 21:
+            targetHeading = 180;
+            break;
+          case 11:
+          case 20:
+            targetHeading = 135;
+            break;
+
+          default:
+            break;
+        }
         break;
       case LOCKED:
         setX();

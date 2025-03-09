@@ -13,9 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.OIConstants;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Manager;
@@ -23,13 +21,13 @@ import frc.robot.subsystems.Spitter;
 import frc.robot.subsystems.Manager.ManagerStates;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Swerve.SwerveStates;
 import frc.utils.Utils.ElasticUtil;
 
 public class RobotContainer {
   private SendableChooser<Command> autoChooser;
   
   private final Manager m_Manager = new Manager();
-  private final CommandXboxController m_controller = new CommandXboxController(OIConstants.XBOX_CONTROLLER_PORT);
 
   public RobotContainer() {
     configureAutos();
@@ -52,36 +50,50 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    m_Manager.setDefaultCommand(new InstantCommand(() -> m_Manager.update(), m_Manager));
+    m_Manager.setDefaultCommand(new RunCommand(() -> m_Manager.update(), m_Manager));
+    Swerve.getInstance().setDefaultCommand(new RunCommand(() -> Swerve.getInstance().update(), Swerve.getInstance()));
 
     // Stops movement - Works
-    new JoystickButton(OI.driverJoytick, 1)
-      .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.LOCKED), m_Manager))
-      .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+    // new JoystickButton(OI.driverJoytick, 1)
+    //   .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.LOCKED), m_Manager))
+    //   .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
 
     // Intakes coral spitter, moving elevator to intaking position
-    m_controller.y()
+    OI.auxController.x()
       .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.INTAKING_CORAL)))
       .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE)));
 
     // Runs coral spitter, moving elevator to level one
-    m_controller.x()
+    OI.auxController.y()
       .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_LEVEL_ONE)))
       .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE)));
 
-    m_controller.b()
+    OI.auxController.b()
       .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_LEVEL_TWO)))
       .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE)));
 
     // Intakes with algae intake, and moves pivot to intaking position
-    m_controller.leftBumper()
+    OI.auxController.leftBumper()
       .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.INTAKING_ALGAE), m_Manager))
       .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
 
     // Scores with algae intake, and moves pivot to scoring position
-    m_controller.leftTrigger()
+    OI.auxController.rightBumper()
       .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_ALGAE), m_Manager))
       .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+
+    // Sets the wheels to an X formation
+    OI.driverController.rightBumper()
+      .onTrue(new InstantCommand(() -> Swerve.getInstance().setDesiredState(SwerveStates.LOCKED), Swerve.getInstance()))
+      .onFalse(new InstantCommand(() -> Swerve.getInstance().setDesiredState(SwerveStates.DRIVE), Swerve.getInstance()));
+
+    // Shuts off normal driving and drives to apriltag (untested)
+    OI.driverController.a()
+      .onTrue(new InstantCommand(() -> Swerve.getInstance().setDesiredState(SwerveStates.AIMING), Swerve.getInstance()))
+      .onFalse(new InstantCommand(() -> {
+        Swerve.getInstance().setDesiredState(SwerveStates.DRIVE);
+        Swerve.getInstance().setTracking(false);
+      }, Swerve.getInstance()));
   }
 
   private void configureAutos() {
