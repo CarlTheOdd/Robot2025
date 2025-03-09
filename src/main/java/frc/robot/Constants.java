@@ -136,5 +136,7 @@ public abstract class Constants {
     public static final double LIMELIGHT_HEIGHT = 30;
 
     public static final double REEF_TAG_HEIGHT = 12.125;
+    public static final double PROCESSOR_TAG_HEIGHT = 51.125;
+    public static final double SOURCE_TAG_HEIGHT = 51.125;
   }
 }

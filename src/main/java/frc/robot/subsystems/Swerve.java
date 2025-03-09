@@ -83,6 +83,8 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
 
   private double targetHeading;
   private boolean trackingTag = false;
+  private Targets currTarget = Targets.REEF;
+  private double currTargetHeight;
 
   private double desiredHeading;
   private boolean activelyTurning;
@@ -464,7 +466,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
         double targetOffset = NetworkTableInstance.getDefault().getTable(Constants.LIMELIGHT_NAME).getEntry("ty").getDouble(0);
         double totalOffset = (LimelightConstants.LIMELIGHT_ANGLE + targetOffset) * (3.14159 / 180);
 
-        double distanceToTag = (LimelightConstants.REEF_TAG_HEIGHT - LimelightConstants.LIMELIGHT_HEIGHT) / Math.tan(totalOffset);
+        double distanceToTag = (currTargetHeight - LimelightConstants.LIMELIGHT_HEIGHT) / Math.tan(totalOffset);
 
         distanceController.setSetpoint(distanceToTag);
 
@@ -500,32 +502,75 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
         break;
       case AIMING:
         switch((int) NetworkTableInstance.getDefault().getTable(Constants.LIMELIGHT_NAME).getEntry("tid").getInteger(-1)) {
+          // Reef IDs
           case 6:
           case 19:
             targetHeading = 45;
+            currTarget = Targets.REEF;
             break;
           case 7:
           case 18:
             targetHeading = 0;
+            currTarget = Targets.REEF;
             break;
           case 8:
           case 17:
             targetHeading = 315;
+            currTarget = Targets.REEF;
             break;
           case 9:
           case 22:
             targetHeading = 225;
+            currTarget = Targets.REEF;
             break;
           case 10:
           case 21:
             targetHeading = 180;
+            currTarget = Targets.REEF;
             break;
           case 11:
           case 20:
             targetHeading = 135;
+            currTarget = Targets.REEF;
+            break;
+
+          // Processor IDs
+          case 3:
+          case 16:
+            targetHeading = 90;
+            currTarget = Targets.PROCESSOR;
+            break;
+
+          // Source IDs
+          case 1:
+          case 13:
+            targetHeading = 225;
+            currTarget = Targets.SOURCE;
+            break;
+          case 2:
+          case 12:
+            targetHeading = 135;
+            currTarget = Targets.SOURCE;
             break;
 
           default:
+            break;
+        }
+
+        switch(currTarget) {
+          case REEF:
+            currTargetHeight = LimelightConstants.REEF_TAG_HEIGHT;
+            break;
+          case PROCESSOR:
+            currTargetHeight = LimelightConstants.PROCESSOR_TAG_HEIGHT;
+            break;
+          case SOURCE:
+            currTargetHeight = LimelightConstants.SOURCE_TAG_HEIGHT;
+            break;
+          
+          default:
+            // This should never run
+            currTargetHeight = 0;
             break;
         }
         break;
@@ -572,5 +617,11 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
     AIMING,
     /** Removes all control and locks the wheels in an X formation */
     LOCKED;
+  }
+
+  public enum Targets {
+    REEF,
+    PROCESSOR,
+    SOURCE;
   }
 }
