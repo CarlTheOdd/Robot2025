@@ -89,7 +89,6 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
   private double desiredHeading;
   private boolean activelyTurning;
   private PIDController angleController = new PIDController(0.009, 0, 0);
-  private PIDController distanceController = new PIDController(0.03, 0, 0);
   private PIDController xController = new PIDController(0.03, 0, 0);
   private PIDController yController = new PIDController(0.03, 0, 0);
 
@@ -106,7 +105,6 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
     angleController.enableContinuousInput(0, 360);
     angleController.setPID(p, i, d);
 
-    distanceController.setTolerance(1);
     xController.setTolerance(1);
     yController.setTolerance(1);
 
@@ -467,8 +465,6 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
         double totalOffset = (LimelightConstants.LIMELIGHT_ANGLE + targetOffset) * (3.14159 / 180);
 
         double distanceToTag = (currTargetHeight - LimelightConstants.LIMELIGHT_HEIGHT) / Math.tan(totalOffset);
-
-        distanceController.setSetpoint(distanceToTag);
 
         double xOffset = distanceToTag * Math.sin(NetworkTableInstance.getDefault().getTable(Constants.LIMELIGHT_NAME).getEntry("tx").getDouble(0));
         double yOffset = distanceToTag * Math.cos(NetworkTableInstance.getDefault().getTable(Constants.LIMELIGHT_NAME).getEntry("tx").getDouble(0));
