@@ -11,20 +11,18 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.SpitterConstants;
-import frc.utils.Utils.ElasticUtil;
 
 // This is for the coral
 public class Spitter extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
   private boolean status = false;
   private boolean initialized = false;
 
-  private SparkMax motor1, motor2;
-  private final DigitalInput proximitySensor;
+  private SparkMax motor;
+  // private final DigitalInput proximitySensor;
 
   private static Spitter m_instance;
 
@@ -32,20 +30,18 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
 
   /** Creates a new Rollers. */
   public Spitter() {
-    motor1 = new SparkMax(CANConstants.ROLLER_MOTOR_ONE_ID, MotorType.kBrushless);
-    motor2 = new SparkMax(CANConstants.ROLLER_MOTOR_TWO_ID, MotorType.kBrushless);
+    motor = new SparkMax(CANConstants.SPITTER_ID, MotorType.kBrushless);
 
     SparkMaxConfig spitterConfig = new SparkMaxConfig();
 
     spitterConfig.idleMode(IdleMode.kBrake)
       .smartCurrentLimit(Constants.CURRENT_LIMIT_NEO);
 
-    motor1.configure(spitterConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    motor2.configure(spitterConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    motor.configure(spitterConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    proximitySensor = new DigitalInput(CANConstants.PROXIMITY_SENSOR_CHANNEL);
+    // proximitySensor = new DigitalInput(CANConstants.PROXIMITY_SENSOR_CHANNEL);
 
-    ElasticUtil.putBoolean("Proximity Sensor", proximitySensor::get);
+    // ElasticUtil.putBoolean("Proximity Sensor", proximitySensor::get);
 
     initialized = true;
   }
@@ -59,13 +55,12 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
   }
 
   public void runSpitter() {
-    motor1.set(SpitterConstants.SPITTER_SPEED);
-    motor2.set(-SpitterConstants.SPITTER_SPEED);
+    motor.set(SpitterConstants.SPITTER_SPEED);
   }
 
   @Override
   public void stop() {
-    motor1.stopMotor();
+    motor.stopMotor();
   }
 
   @Override
@@ -90,11 +85,6 @@ public class Spitter extends SubsystemBase implements CheckableSubsystem, StateS
       case BROKEN:
         break;
       case INTAKING:
-        if(!proximitySensor.get()) {
-          runSpitter();
-        } else {
-          setDesiredState(SpitterStates.IDLE);
-        }
       case RUNNING:
         runSpitter();
         break;

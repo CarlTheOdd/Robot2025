@@ -79,23 +79,21 @@ public abstract class Constants {
     public static final int BACK_RIGHT_TURNING_ID = 4;
 
     // These are not CAN ids, these are the analog ports on the roborio
-    public static final int FL_ENCODER_ANALOG_INPUT_CHANNEL = 0;
-    public static final int FR_ENCODER_ANALOG_INPUT_CHANNEL = 1;
-    public static final int BL_ENCODER_ANALOG_INPUT_CHANNEL = 2;
+    public static final int FL_ENCODER_ANALOG_INPUT_CHANNEL = 1;
+    public static final int FR_ENCODER_ANALOG_INPUT_CHANNEL = 2;
+    public static final int BL_ENCODER_ANALOG_INPUT_CHANNEL = 0;
     public static final int BR_ENCODER_ANALOG_INPUT_CHANNEL = 3;
 
-    public static final int PROXIMITY_SENSOR_CHANNEL = 0;
+    // public static final int PROXIMITY_SENSOR_CHANNEL = 0;
 
     // Gyro
     public static final int GYRO_ID = 10;
 
-    public static final int ROLLER_MOTOR_ONE_ID = 9990;
-    public static final int ROLLER_MOTOR_TWO_ID = 9996;
-    public static final int PIVOT_ID = 9991;
-    public static final int ALGAE_INTAKE_ID = 9992;
-    public static final int ELEVATOR_MOTOR_ONE_ID = 9993;
-    public static final int ELEVATOR_MOTOR_TWO_ID = 9994;
-    public static final int FLIPPER_ID = 9995;
+    public static final int SPITTER_ID = 14;
+    public static final int PIVOT_ID = 13;
+    public static final int ALGAE_INTAKE_ID = 15;
+    public static final int ELEVATOR_MOTOR_ONE_ID = 11;
+    public static final int ELEVATOR_MOTOR_TWO_ID = 12;
   }
 
   public static abstract class SpitterConstants {
@@ -109,8 +107,8 @@ public abstract class Constants {
 
   public static abstract class PivotConstants {
     public static final double HOME_ROTATION = 0;
-    public static final double INTAKE_ROTATION = 6;
-    public static final double SCORE_ROTATION = 0;
+    public static final double INTAKE_ROTATION = -8;
+    public static final double SCORE_ROTATION = -2;
     public static final double PID_ERROR_TOLERANCE = 0;
   }
 

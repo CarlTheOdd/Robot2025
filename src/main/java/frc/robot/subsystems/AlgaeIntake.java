@@ -47,7 +47,7 @@ public class AlgaeIntake extends SubsystemBase implements CheckableSubsystem, St
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {} 
 
   public void setSpeed(double speed) {
     motor.set(speed);
