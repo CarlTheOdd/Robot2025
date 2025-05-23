@@ -58,19 +58,9 @@ public class RobotContainer {
     //   .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.LOCKED), m_Manager))
     //   .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
 
-    // Intakes coral spitter, moving elevator to intaking position
-    OI.auxController.x()
-      .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.INTAKING_CORAL)))
-      .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE)));
-
-    // Runs coral spitter, moving elevator to level one
-    OI.auxController.y()
-      .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_LEVEL_ONE)))
-      .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE)));
-
-    OI.auxController.b()
-      .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_LEVEL_TWO)))
-      .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE)));
+    OI.auxController.a()
+      .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.KNOCKING_ALGAE), m_Manager))
+      .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
 
     // Intakes with algae intake, and moves pivot to intaking position
     OI.auxController.leftBumper()
@@ -88,17 +78,15 @@ public class RobotContainer {
       .onFalse(new InstantCommand(() -> Swerve.getInstance().setDesiredState(SwerveStates.DRIVE), Swerve.getInstance()));
 
     // Shuts off normal driving and drives to apriltag (untested)
-    OI.driverController.a()
-      .onTrue(new InstantCommand(() -> Swerve.getInstance().setDesiredState(SwerveStates.AIMING), Swerve.getInstance()))
-      .onFalse(new InstantCommand(() -> {
-        Swerve.getInstance().setDesiredState(SwerveStates.DRIVE);
-        Swerve.getInstance().setTracking(false);
-      }, Swerve.getInstance()));
+    // OI.driverController.a()
+    //   .onTrue(new InstantCommand(() -> Swerve.getInstance().setDesiredState(SwerveStates.AIMING), Swerve.getInstance()))
+    //   .onFalse(new InstantCommand(() -> {
+    //     Swerve.getInstance().setDesiredState(SwerveStates.DRIVE);
+    //     Swerve.getInstance().setTracking(false);
+    //   }, Swerve.getInstance()));
   }
 
   private void configureAutos() {
-    NamedCommands.registerCommand("scoreLvl1", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_LEVEL_ONE), m_Manager));
-    NamedCommands.registerCommand("scoreLvl2", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_LEVEL_TWO), m_Manager));
     NamedCommands.registerCommand("scoreAlgae", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_ALGAE), m_Manager));
     NamedCommands.registerCommand("drive", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
     NamedCommands.registerCommand("idle", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.IDLE), m_Manager));

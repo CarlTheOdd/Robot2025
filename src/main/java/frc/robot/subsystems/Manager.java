@@ -86,9 +86,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
         break;
       case DRIVE:
       case LOCKED:
-      case INTAKING_CORAL:
-      case SCORING_LEVEL_ONE:
-      case SCORING_LEVEL_TWO:
+      case KNOCKING_ALGAE:
       case INTAKING_ALGAE:
       case SCORING_ALGAE:
         break;
@@ -126,23 +124,9 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
         algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
         elevator.setDesiredState(ElevatorStates.HOME);
         break;
-      case INTAKING_CORAL:
+      case KNOCKING_ALGAE:
         swerve.setDesiredState(SwerveStates.DRIVE);
-        if(elevator.atSetpoint()) spitter.setDesiredState(SpitterStates.INTAKING);
-        pivot.setDesiredState(PivotStates.STORED);
-        algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
-        elevator.setDesiredState(ElevatorStates.INTAKING);
-        break;
-      case SCORING_LEVEL_ONE:
-        swerve.setDesiredState(SwerveStates.DRIVE);
-        if(elevator.atSetpoint()) spitter.setDesiredState(SpitterStates.RUNNING);
-        pivot.setDesiredState(PivotStates.STORED);
-        algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
-        elevator.setDesiredState(ElevatorStates.L1);
-        break;
-      case SCORING_LEVEL_TWO:
-        swerve.setDesiredState(SwerveStates.DRIVE);
-        if(elevator.atSetpoint()) spitter.setDesiredState(SpitterStates.RUNNING);
+        spitter.setDesiredState(SpitterStates.RUNNING);
         pivot.setDesiredState(PivotStates.STORED);
         algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
         elevator.setDesiredState(ElevatorStates.L2);
@@ -209,12 +193,8 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     DRIVE,
     /** Locking the wheels in an X formation */
     LOCKED,
-    /** Moves elevator to intaking position, then activates spitter */
-    INTAKING_CORAL,
-    /** Moves elevator to l1 position, then activates spitter */
-    SCORING_LEVEL_ONE,
-    /** Moves elevator to l2 position, then activates spitter */
-    SCORING_LEVEL_TWO,
+    /** Knocking algae out of the reef */
+    KNOCKING_ALGAE,
     /** Intaking with the algae intake, also sets pivot position */
     INTAKING_ALGAE,
     /** Scoring with the algae intake, also sets pivot position */

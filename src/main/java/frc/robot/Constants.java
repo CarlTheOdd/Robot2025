@@ -118,7 +118,7 @@ public abstract class Constants {
     public static final double INTAKING_POSITION = 0;
     public static final double HOME_POSITION = 0;
     public static final double L1_POSITION = 1.7;
-    public static final double L2_POSITION = 2.5;
+    public static final double L2_POSITION = -3.0;
 
     public static final double PID_ERROR_TOLERANCE = 0.01;
   }
