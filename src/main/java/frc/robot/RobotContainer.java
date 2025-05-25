@@ -58,6 +58,7 @@ public class RobotContainer {
     //   .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.LOCKED), m_Manager))
     //   .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
 
+    // Lifts elevator to knock off algae, and runs rollers
     OI.auxController.a()
       .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.KNOCKING_ALGAE), m_Manager))
       .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));

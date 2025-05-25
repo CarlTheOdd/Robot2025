@@ -113,9 +113,9 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
       case DRIVE:
         swerve.setDesiredState(SwerveStates.DRIVE);
         spitter.setDesiredState(SpitterStates.IDLE);
-        pivot.setDesiredState(PivotStates.IDLE);
+        pivot.setDesiredState(PivotStates.STORED);
         algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
-        elevator.setDesiredState(ElevatorStates.IDLE);
+        elevator.setDesiredState(ElevatorStates.HOME);
         break;
       case LOCKED:
         swerve.setDesiredState(SwerveStates.LOCKED);

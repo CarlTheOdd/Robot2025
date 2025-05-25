@@ -454,9 +454,9 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
       case DRIVE:
         if(DriverStation.isTeleopEnabled()) {
           drive(
-              MathUtil.applyDeadband(OI.driverController.getLeftY(), 0.05),
-              MathUtil.applyDeadband(OI.driverController.getLeftX(), 0.05),
-              MathUtil.applyDeadband(OI.driverController.getRightX(), 0.05),
+              MathUtil.applyDeadband(OI.driverController.getLeftY(), SwerveConstants.DRIVING_DEADBAND),
+              MathUtil.applyDeadband(OI.driverController.getLeftX(), SwerveConstants.DRIVING_DEADBAND),
+              MathUtil.applyDeadband(OI.driverController.getRightX(), SwerveConstants.DRIVING_DEADBAND),
               true, SwerveConstants.SPEED_SCALE);
         }
         break;

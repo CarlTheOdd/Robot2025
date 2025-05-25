@@ -28,6 +28,9 @@ public abstract class Constants {
     // The speed modifier for the swerve drive as a percent
     public static final double SPEED_SCALE = 0.2;
 
+    // Deadband to clamp input values for driving
+    public static final double DRIVING_DEADBAND = 0.07;
+
     // Chassis configuration
     public static final double TRACK_WIDTH = Units.inchesToMeters(22.5);
     // Distance between centers of right and left wheels on robot

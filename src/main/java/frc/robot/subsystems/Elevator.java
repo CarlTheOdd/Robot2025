@@ -109,8 +109,6 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
 
     switch(currentState) {
       case IDLE:
-        if(!atSetpoint()) setDesiredState(ElevatorStates.HOME);
-        break;
       case BROKEN:
         break;
       case INTAKING:
@@ -124,9 +122,9 @@ public class Elevator extends SubsystemBase implements CheckableSubsystem, State
         break;
     }
 
-    if(!checkSubsystem()) {
-      setDesiredState(ElevatorStates.BROKEN);
-    }
+    // if(!checkSubsystem()) {
+    //   setDesiredState(ElevatorStates.BROKEN);
+    // }
   }
 
   @Override
