@@ -13,21 +13,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import frc.robot.subsystems.AlgaeIntake;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Manager;
-import frc.robot.subsystems.Spitter;
-import frc.robot.subsystems.Manager.ManagerStates;
-import frc.robot.subsystems.Pivot;
-import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.Swerve.SwerveStates;
+import frc.robot.handlers.AlgaeIntake;
+import frc.robot.handlers.Elevator;
+import frc.robot.handlers.Manager;
+import frc.robot.handlers.Manager.ManagerStates;
+import frc.robot.handlers.Pivot;
+import frc.robot.handlers.Spitter;
+import frc.robot.handlers.Swerve;
+import frc.robot.handlers.Swerve.SwerveStates;
 import frc.utils.Utils.ElasticUtil;
 
 public class RobotContainer {
   private SendableChooser<Command> autoChooser;
-  
-  private final Manager m_Manager = new Manager();
 
   public RobotContainer() {
     configureAutos();
@@ -38,7 +35,7 @@ public class RobotContainer {
   private void configureElastic() {
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
-    ElasticUtil.putString("Manager State", () -> m_Manager.getState().toString());
+    ElasticUtil.putString("Manager State", () -> Manager.getInstance().getState().toString());
     ElasticUtil.putString("Swerve State", () -> Swerve.getInstance().getState().toString());
     ElasticUtil.putString("Spitter State", () -> Spitter.getInstance().getState().toString());
     ElasticUtil.putString("Pivot State", () -> Pivot.getInstance().getState().toString());
@@ -50,33 +47,17 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    m_Manager.setDefaultCommand(new RunCommand(() -> m_Manager.update(), m_Manager));
-    Swerve.getInstance().setDefaultCommand(new RunCommand(() -> Swerve.getInstance().update(), Swerve.getInstance()));
-
-    // Stops movement - Works
-    // new JoystickButton(OI.driverJoytick, 1)
-    //   .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.LOCKED), m_Manager))
-    //   .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
-
     // Lifts elevator to knock off algae, and runs rollers
-    OI.auxController.a()
-      .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.KNOCKING_ALGAE), m_Manager))
-      .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+    Manager.getInstance().bindState(OI.auxController.a(), ManagerStates.KNOCKING_ALGAE, ManagerStates.DRIVE);
 
     // Intakes with algae intake, and moves pivot to intaking position
-    OI.auxController.leftBumper()
-      .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.INTAKING_ALGAE), m_Manager))
-      .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+    Manager.getInstance().bindState(OI.auxController.leftBumper(), ManagerStates.INTAKING_ALGAE, ManagerStates.DRIVE);
 
     // Scores with algae intake, and moves pivot to scoring position
-    OI.auxController.rightBumper()
-      .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_ALGAE), m_Manager))
-      .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+    Manager.getInstance().bindState(OI.auxController.rightBumper(), ManagerStates.SCORING_ALGAE, ManagerStates.DRIVE);
 
     // Sets the wheels to an X formation
-    OI.driverController.rightBumper()
-      .onTrue(new InstantCommand(() -> Swerve.getInstance().setDesiredState(SwerveStates.LOCKED), Swerve.getInstance()))
-      .onFalse(new InstantCommand(() -> Swerve.getInstance().setDesiredState(SwerveStates.DRIVE), Swerve.getInstance()));
+    Swerve.getInstance().bindState(OI.driverController.rightBumper(), SwerveStates.LOCKED, SwerveStates.DRIVE);
 
     // Shuts off normal driving and drives to apriltag (untested)
     // OI.driverController.a()
@@ -88,9 +69,9 @@ public class RobotContainer {
   }
 
   private void configureAutos() {
-    NamedCommands.registerCommand("scoreAlgae", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SCORING_ALGAE), m_Manager));
-    NamedCommands.registerCommand("drive", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
-    NamedCommands.registerCommand("idle", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.IDLE), m_Manager));
+    NamedCommands.registerCommand("scoreAlgae", new InstantCommand(() -> Manager.getInstance().setDesiredState(ManagerStates.SCORING_ALGAE), Manager.getInstance()));
+    NamedCommands.registerCommand("drive", new InstantCommand(() -> Manager.getInstance().setDesiredState(ManagerStates.DRIVE), Manager.getInstance()));
+    NamedCommands.registerCommand("idle", new InstantCommand(() -> Manager.getInstance().setDesiredState(ManagerStates.IDLE), Manager.getInstance()));
   }
 
   public Command getAutonomousCommand() {

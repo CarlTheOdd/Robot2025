@@ -14,25 +14,23 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.PivotConstants;
+import frc.robot.handlers.CheckableSubsystem;
 import frc.utils.Utils;
 import frc.utils.Utils.ElasticUtil;
 
 // This is for the algae
-public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
-  private boolean status = false;
+public class S_Pivot extends SubsystemBase implements CheckableSubsystem {
   private boolean initialized = false;
+  private boolean status = false;
 
   private SparkMax motor;
 
-  private static Pivot m_instance;
+  private static S_Pivot m_Instance;
 
   private PIDController angleController;
-  private double p = 0.01, i = 0, d = 0;
+  private double p = 0.03, i = 0, d = 0;
 
-  private PivotStates desiredState = PivotStates.IDLE, currentState = PivotStates.IDLE;
-
-  /** Creates a new Pivot. */
-  public Pivot() {
+  public S_Pivot() {
     motor = new SparkMax(CANConstants.PIVOT_ID, MotorType.kBrushless);
 
     SparkMaxConfig pivotConfig = new SparkMaxConfig();
@@ -43,6 +41,8 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     angleController = new PIDController(p, i, d);
     angleController.setTolerance(PivotConstants.PID_ERROR_TOLERANCE);
 
+    motor.getEncoder().setPosition(0);
+
     ElasticUtil.putDouble("Pivot P", () -> this.p, value -> { this.p = value; });
     ElasticUtil.putDouble("Pivot I", () -> this.i, value -> { this.i = value; });
     ElasticUtil.putDouble("Pivot D", () -> this.d, value -> { this.d = value; });
@@ -51,12 +51,24 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     initialized = true;
   }
 
-  public static Pivot getInstance() {
-    if(m_instance == null) {
-      m_instance = new Pivot();
+  public static S_Pivot getInstance() {
+    if(m_Instance == null) {
+      m_Instance = new S_Pivot();
     }
 
-    return m_instance;
+    return m_Instance;
+  }
+
+  public void set(double speed) {
+    motor.set(Utils.normalize(speed));
+  }
+
+  public void setSetpoint(double setpoint) {
+    angleController.setSetpoint(setpoint);
+  }
+
+  public void moveToSetpoint() {
+    set(angleController.calculate(motor.getEncoder().getPosition()));
   }
 
   @Override
@@ -74,73 +86,5 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     status &= getInitialized();
 
     return status;
-  }
-
-  @Override
-  public void periodic() {}
-
-  public void update() {
-    switch(currentState) {
-      case IDLE:
-        setDesiredState(PivotStates.STORED);
-        break;
-      case BROKEN:
-        break;
-      case STORED:
-      case SCORING:
-      case INTAKING:
-        motor.set(Utils.normalize(angleController.calculate(motor.getEncoder().getPosition())));
-        break;
-
-      default:
-        break;
-    }
-
-    if(!checkSubsystem()) {
-      setDesiredState(PivotStates.BROKEN);
-    }
-  }
-
-  @Override
-  public void handleStateTransition() {
-    switch(desiredState) {
-      case IDLE:
-      case BROKEN:
-        stop();
-        break;
-      case STORED:
-        angleController.setSetpoint(PivotConstants.HOME_ROTATION);
-        break;
-      case SCORING:
-        angleController.setSetpoint(PivotConstants.SCORE_ROTATION);
-        break;
-      case INTAKING:
-        angleController.setSetpoint(PivotConstants.INTAKE_ROTATION);
-        break;
-
-      default:
-        break;
-    }
-
-    currentState = desiredState;
-  }
-
-  public void setDesiredState(PivotStates state) {
-    if(this.desiredState != state) {
-      desiredState = state;
-      handleStateTransition();
-    }
-  }
-
-  public PivotStates getState() {
-    return currentState;
-  }
-
-  public enum PivotStates {
-    IDLE,
-    BROKEN,
-    STORED,
-    SCORING,
-    INTAKING;
   }
 }

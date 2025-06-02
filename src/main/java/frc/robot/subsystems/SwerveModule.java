@@ -27,6 +27,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.handlers.CheckableSubsystem;
 import frc.utils.Utils;
 
 public class SwerveModule implements CheckableSubsystem {

@@ -2,36 +2,48 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.handlers;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.AlgaeIntake.AlgaeIntakeStates;
-import frc.robot.subsystems.Elevator.ElevatorStates;
-import frc.robot.subsystems.Pivot.PivotStates;
-import frc.robot.subsystems.Spitter.SpitterStates;
-import frc.robot.subsystems.Swerve.SwerveStates;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.handlers.AlgaeIntake.AlgaeIntakeStates;
+import frc.robot.handlers.Elevator.ElevatorStates;
+import frc.robot.handlers.Pivot.PivotStates;
+import frc.robot.handlers.Spitter.SpitterStates;
+import frc.robot.subsystems.S_AlgaeIntake;
+import frc.robot.subsystems.S_Elevator;
+import frc.robot.subsystems.S_Pivot;
+import frc.robot.subsystems.S_Spitter;
 
 public class Manager extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
-
   private boolean status = false;
   private boolean initialized = false;
 
-  private Swerve swerve = Swerve.getInstance();
-  private Spitter spitter = Spitter.getInstance();
-  private Pivot pivot = Pivot.getInstance();
-  private AlgaeIntake algaeIntake = AlgaeIntake.getInstance();
-  private Elevator elevator = Elevator.getInstance();
+  // private Swerve swerve = Swerve.getInstance();
+  private S_Spitter spitter = S_Spitter.getInstance();
+  private S_Pivot pivot = S_Pivot.getInstance();
+  private S_AlgaeIntake algaeIntake = S_AlgaeIntake.getInstance();
+  private S_Elevator elevator = S_Elevator.getInstance();
 
+  private static Manager m_Instance;
   private ManagerStates desiredState, currentState = ManagerStates.IDLE;
 
   /** Creates a new Manager. */
-  public Manager() {
+  private Manager() {
     // All subsystems should initialize when calling getInstance()
-    initialized &= swerve.getInitialized();
     initialized &= spitter.getInitialized();
     initialized &= pivot.getInitialized();
     initialized &= algaeIntake.getInitialized();
     initialized &= elevator.getInitialized();
+  }
+
+  public static Manager getInstance() {
+    if(m_Instance == null) {
+      m_Instance = new Manager();
+    }
+
+    return m_Instance;
   }
 
   /**
@@ -39,7 +51,6 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
    */
   @Override
   public void stop() {
-    swerve.stop();
     spitter.stop();
     pivot.stop();
     algaeIntake.stop();
@@ -59,7 +70,6 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
    */
   @Override
   public boolean checkSubsystem() {
-    status &= swerve.checkSubsystem();
     status &= spitter.checkSubsystem();
     status &= pivot.checkSubsystem();
     status &= algaeIntake.checkSubsystem();
@@ -73,12 +83,6 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
    */
   @Override
   public void update() {
-    swerve.update();
-    spitter.update();
-    pivot.update();
-    algaeIntake.update();
-    elevator.update();
-
     switch(currentState) {
       case IDLE:
         // The robot should never be IDLE in a match
@@ -104,45 +108,39 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   public void handleStateTransition() {
     switch(desiredState) {
       case IDLE:
-        swerve.setDesiredState(SwerveStates.IDLE);
-        spitter.setDesiredState(SpitterStates.IDLE);
-        pivot.setDesiredState(PivotStates.IDLE);
-        algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
-        elevator.setDesiredState(ElevatorStates.IDLE);
+        Spitter.getInstance().setDesiredState(SpitterStates.IDLE);
+        Pivot.getInstance().setDesiredState(PivotStates.IDLE);
+        AlgaeIntake.getInstance().setDesiredState(AlgaeIntakeStates.IDLE);
+        Elevator.getInstance().setDesiredState(ElevatorStates.IDLE);
         break;
       case DRIVE:
-        swerve.setDesiredState(SwerveStates.DRIVE);
-        spitter.setDesiredState(SpitterStates.IDLE);
-        pivot.setDesiredState(PivotStates.STORED);
-        algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
-        elevator.setDesiredState(ElevatorStates.HOME);
+        Spitter.getInstance().setDesiredState(SpitterStates.IDLE);
+        Pivot.getInstance().setDesiredState(PivotStates.STORED);
+        AlgaeIntake.getInstance().setDesiredState(AlgaeIntakeStates.IDLE);
+        Elevator.getInstance().setDesiredState(ElevatorStates.HOME);
         break;
       case LOCKED:
-        swerve.setDesiredState(SwerveStates.LOCKED);
-        spitter.setDesiredState(SpitterStates.IDLE);
-        pivot.setDesiredState(PivotStates.STORED);
-        algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
-        elevator.setDesiredState(ElevatorStates.HOME);
+        Spitter.getInstance().setDesiredState(SpitterStates.IDLE);
+        Pivot.getInstance().setDesiredState(PivotStates.STORED);
+        AlgaeIntake.getInstance().setDesiredState(AlgaeIntakeStates.IDLE);
+        Elevator.getInstance().setDesiredState(ElevatorStates.HOME);
         break;
       case KNOCKING_ALGAE:
-        swerve.setDesiredState(SwerveStates.DRIVE);
-        spitter.setDesiredState(SpitterStates.RUNNING);
-        pivot.setDesiredState(PivotStates.STORED);
-        algaeIntake.setDesiredState(AlgaeIntakeStates.IDLE);
-        elevator.setDesiredState(ElevatorStates.L2);
+        Spitter.getInstance().setDesiredState(SpitterStates.RUNNING);
+        Pivot.getInstance().setDesiredState(PivotStates.STORED);
+        AlgaeIntake.getInstance().setDesiredState(AlgaeIntakeStates.IDLE);
+        Elevator.getInstance().setDesiredState(ElevatorStates.L2);
       case INTAKING_ALGAE:
-        swerve.setDesiredState(SwerveStates.DRIVE);
-        spitter.setDesiredState(SpitterStates.IDLE);
-        pivot.setDesiredState(PivotStates.INTAKING);
-        algaeIntake.setDesiredState(AlgaeIntakeStates.INTAKING);
-        elevator.setDesiredState(ElevatorStates.HOME);
+        Spitter.getInstance().setDesiredState(SpitterStates.IDLE);
+        Pivot.getInstance().setDesiredState(PivotStates.INTAKING);
+        AlgaeIntake.getInstance().setDesiredState(AlgaeIntakeStates.INTAKING);
+        Elevator.getInstance().setDesiredState(ElevatorStates.HOME);
         break;
       case SCORING_ALGAE:
-        swerve.setDesiredState(SwerveStates.DRIVE);
-        spitter.setDesiredState(SpitterStates.IDLE);
-        pivot.setDesiredState(PivotStates.SCORING);
-        algaeIntake.setDesiredState(AlgaeIntakeStates.SCORING);
-        elevator.setDesiredState(ElevatorStates.HOME);
+        Spitter.getInstance().setDesiredState(SpitterStates.IDLE);
+        Pivot.getInstance().setDesiredState(PivotStates.SCORING);
+        AlgaeIntake.getInstance().setDesiredState(AlgaeIntakeStates.SCORING);
+        Elevator.getInstance().setDesiredState(ElevatorStates.HOME);
         break;
 
       default:
@@ -156,9 +154,10 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
    * Sets the desired state of the subsystem
    * @param state Desired state
    */
-  public void setDesiredState(ManagerStates state) {
+  @Override
+  public void setDesiredState(State state) {
     if(desiredState != state) {
-      desiredState = state;
+      desiredState = (ManagerStates) state;
       handleStateTransition();
     }
   }
@@ -172,7 +171,13 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    update();
+  }
+
+  public Trigger bindState(Trigger button, ManagerStates onTrue, ManagerStates onFalse) {
+    return button
+      .onTrue(new InstantCommand(() -> setDesiredState(onTrue), this))
+      .onFalse(new InstantCommand(() -> setDesiredState(onFalse), this));
   }
 
   /**
@@ -187,7 +192,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
    * robot is broken. In that scenario the robot would be E-stopped
    * anyway and no code would run be running.
   */
-  public enum ManagerStates {
+  public enum ManagerStates implements State {
     IDLE,
     /** Just driving the robot around */
     DRIVE,
