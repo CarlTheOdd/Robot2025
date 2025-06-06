@@ -47,6 +47,7 @@ public class S_Pivot extends SubsystemBase implements CheckableSubsystem {
     ElasticUtil.putDouble("Pivot I", () -> this.i, value -> { this.i = value; });
     ElasticUtil.putDouble("Pivot D", () -> this.d, value -> { this.d = value; });
     ElasticUtil.putDouble("Pivot Position", motor.getEncoder()::getPosition);
+    ElasticUtil.putBoolean("Pivot At Setpoint", this::atSetpoint);
 
     initialized = true;
   }
@@ -69,6 +70,10 @@ public class S_Pivot extends SubsystemBase implements CheckableSubsystem {
 
   public void moveToSetpoint() {
     set(angleController.calculate(motor.getEncoder().getPosition()));
+  }
+
+  public boolean atSetpoint() {
+    return angleController.atSetpoint();
   }
 
   @Override

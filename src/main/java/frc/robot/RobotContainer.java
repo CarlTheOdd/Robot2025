@@ -65,6 +65,10 @@ public class RobotContainer {
     // Sets the wheels to an X formation
     Swerve.getInstance().bindState(OI.driverController.rightBumper(), SwerveStates.LOCKED, SwerveStates.DRIVE);
 
+    // Zeroes the gyro
+    OI.driverController.start()
+      .onTrue(new InstantCommand(() -> S_Swerve.getInstance().setHeading(0), Swerve.getInstance()));
+
     // Shuts off normal driving and drives to apriltag (untested)
     // OI.driverController.a()
     //   .onTrue(new InstantCommand(() -> Swerve.getInstance().setDesiredState(SwerveStates.AIMING), Swerve.getInstance()))
