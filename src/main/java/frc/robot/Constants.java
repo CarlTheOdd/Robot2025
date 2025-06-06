@@ -26,7 +26,7 @@ public abstract class Constants {
 
   public static abstract class SwerveConstants {
     // The speed modifier for the swerve drive as a percent
-    public static final double SPEED_SCALE = 0.2;
+    public static final double SPEED_SCALE = 1;
     public static final double ROTATION_SPEED_SCALE = 0.7;
 
     // Deadband to clamp input values for driving
