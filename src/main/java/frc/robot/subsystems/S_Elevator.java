@@ -71,8 +71,8 @@ public class S_Elevator extends SubsystemBase implements CheckableSubsystem {
 
   public void setSpeed(double speed) {
     speed = Utils.normalize(speed);
-    motor1.set(speed);
-    motor2.set(-speed);
+    motor1.set(-speed);
+    motor2.set(speed);
   }
 
   public void setSetpoint(double setpoint) {
@@ -88,7 +88,7 @@ public class S_Elevator extends SubsystemBase implements CheckableSubsystem {
   }
 
   public double getEncoderPosition() {
-    return (motor1.getEncoder().getPosition() + motor2.getEncoder().getPosition()) / 2;
+    return (motor2.getEncoder().getPosition() - motor1.getEncoder().getPosition()) / 2;
   }
 
   @Override
@@ -104,7 +104,7 @@ public class S_Elevator extends SubsystemBase implements CheckableSubsystem {
 
   @Override
   public boolean checkSubsystem() {
-    status &= initialized;
+    status = initialized;
 
     return status;
   }

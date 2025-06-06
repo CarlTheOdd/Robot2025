@@ -64,7 +64,7 @@ public class S_Spitter extends SubsystemBase implements CheckableSubsystem {
 
   @Override
   public boolean checkSubsystem() {
-    status &= getInitialized();
+    status = getInitialized();
 
     return status;
   }

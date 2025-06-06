@@ -83,7 +83,7 @@ public class S_Pivot extends SubsystemBase implements CheckableSubsystem {
 
   @Override
   public boolean checkSubsystem() {
-    status &= getInitialized();
+    status = getInitialized();
 
     return status;
   }

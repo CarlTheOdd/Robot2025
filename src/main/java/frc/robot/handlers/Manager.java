@@ -32,7 +32,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   /** Creates a new Manager. */
   private Manager() {
     // All subsystems should initialize when calling getInstance()
-    initialized &= spitter.getInitialized();
+    initialized = spitter.getInitialized();
     initialized &= pivot.getInitialized();
     initialized &= algaeIntake.getInitialized();
     initialized &= elevator.getInitialized();
@@ -70,7 +70,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
    */
   @Override
   public boolean checkSubsystem() {
-    status &= spitter.checkSubsystem();
+    status = spitter.checkSubsystem();
     status &= pivot.checkSubsystem();
     status &= algaeIntake.checkSubsystem();
     status &= elevator.checkSubsystem();
@@ -130,6 +130,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
         Pivot.getInstance().setDesiredState(PivotStates.STORED);
         AlgaeIntake.getInstance().setDesiredState(AlgaeIntakeStates.IDLE);
         Elevator.getInstance().setDesiredState(ElevatorStates.L2);
+        break;
       case INTAKING_ALGAE:
         Spitter.getInstance().setDesiredState(SpitterStates.IDLE);
         Pivot.getInstance().setDesiredState(PivotStates.INTAKING);
@@ -156,7 +157,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
    */
   @Override
   public void setDesiredState(State state) {
-    if(desiredState != state) {
+    if(desiredState != (ManagerStates) state) {
       desiredState = (ManagerStates) state;
       handleStateTransition();
     }

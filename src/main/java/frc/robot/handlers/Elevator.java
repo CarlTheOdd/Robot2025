@@ -50,6 +50,8 @@ public class Elevator extends SubsystemBase implements StateSubsystem {
       default:
         break;
     }
+
+    currentState = desiredState;
   }
 
   @Override

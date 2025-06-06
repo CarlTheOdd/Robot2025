@@ -53,6 +53,8 @@ public class Pivot extends SubsystemBase implements StateSubsystem {
       default:
         break;
     }
+
+    currentState = desiredState;
   }
 
   @Override

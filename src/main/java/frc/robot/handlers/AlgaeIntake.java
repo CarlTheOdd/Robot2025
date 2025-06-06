@@ -50,6 +50,8 @@ public class AlgaeIntake extends SubsystemBase implements StateSubsystem {
       default:
         break;
     }
+
+    currentState = desiredState;
   }
 
   @Override

@@ -45,7 +45,7 @@ public abstract class Constants {
 
     // Angular offsets of the modules relative to the chassis in radians
     public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -(Math.PI / 2) - (Math.PI / 6) - 0.226;
-    public static final double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI + 0.226;
+    public static final double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET = (Math.PI / 3) + (Math.PI / 2) - 0.226;
     public static final double BACK_LEFT_CHASSIS_ANGULAR_OFFSET = 0 - 0.226; // GOOD
     public static final double BACK_RIGHT_CHASSIS_ANGULAR_OFFSET = -(Math.PI / 2) + 0.226;
 
@@ -101,12 +101,12 @@ public abstract class Constants {
   }
 
   public static abstract class SpitterConstants {
-    public static final double SPITTER_SPEED = 1;
+    public static final double SPITTER_SPEED = 0.5;
   }
 
   public static abstract class AlgaeIntakeConstants {
-    public static final double ALGAE_INTAKING_SPEED = 1;
-    public static final double ALGAE_SCORING_SPEED = -1;
+    public static final double ALGAE_INTAKING_SPEED = 0.6;
+    public static final double ALGAE_SCORING_SPEED = -0.6;
   }
 
   public static abstract class PivotConstants {
@@ -124,7 +124,7 @@ public abstract class Constants {
     public static final double L1_POSITION = 1.7;
     public static final double L2_POSITION = -3.0;
 
-    public static final double PID_ERROR_TOLERANCE = 0.01;
+    public static final double PID_ERROR_TOLERANCE = 0.02;
   }
 
   public static abstract class OIConstants {

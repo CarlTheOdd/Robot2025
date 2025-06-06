@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.net.WebServer;
@@ -13,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.handlers.AlgaeIntake;
 import frc.robot.handlers.Elevator;
 import frc.robot.handlers.Manager;
@@ -21,6 +21,7 @@ import frc.robot.handlers.Pivot;
 import frc.robot.handlers.Spitter;
 import frc.robot.handlers.Swerve;
 import frc.robot.handlers.Swerve.SwerveStates;
+import frc.robot.subsystems.S_Swerve;
 import frc.utils.Utils.ElasticUtil;
 
 public class RobotContainer {
@@ -42,7 +43,12 @@ public class RobotContainer {
     ElasticUtil.putString("Elevator State", () -> Elevator.getInstance().getState().toString());
     ElasticUtil.putString("Algae Intake State", () -> AlgaeIntake.getInstance().getState().toString());
 
-    autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser = new SendableChooser<Command>();
+
+    RunCommand leave = new RunCommand(() -> S_Swerve.getInstance().drive(-0.5, 0, -S_Swerve.getInstance().angleController.calculate(S_Swerve.getInstance().getHeading(), 180), false), Swerve.getInstance());
+    
+    autoChooser.addOption("leave thing", leave);
+
     SmartDashboard.putData("auto chooser", autoChooser);
   }
 

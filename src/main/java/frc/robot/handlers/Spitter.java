@@ -5,7 +5,7 @@ import frc.robot.subsystems.S_Spitter;
 
 public class Spitter extends SubsystemBase implements StateSubsystem {
   private SpitterStates desiredState, currentState = SpitterStates.IDLE;
-  private S_Spitter spitter = new S_Spitter();
+  private S_Spitter spitter = S_Spitter.getInstance();
   private static Spitter m_Instance;
 
   private Spitter() {}
